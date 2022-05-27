@@ -382,6 +382,7 @@ fi
 if [ -d "/usr/local/sbin" ]; then
     export PATH="/usr/local/sbin:$PATH"
 fi
+export PATH="~/.local/bin:$PATH"
 
 # Remove any duplicate paths.
 # See https://stackoverflow.com/questions/11650840/remove-redundant-paths-from-path-variable

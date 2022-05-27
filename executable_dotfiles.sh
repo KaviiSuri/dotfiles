@@ -56,6 +56,10 @@ setup_dependencies() {
         printf -- "%sInstalling/updating apps using Homebrew...%s\n" "$BLUE" "$RESET"
         brew bundle --global
     fi
+
+    # Install Rust
+    printf -- "%sInstalling/updating Rust...%s\n" "$BLUE" "$RESET"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
 setup_prompts() {
@@ -64,6 +68,9 @@ setup_prompts() {
 
 setup_applications() {
     printf -- "\n%sSetting up CLI applications:%s\n\n" "$BOLD" "$RESET"
+    printf -- "\n%sInstalling Neovim:%s\n\n" "$BLUE" "$RESET"
+    curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release | sudo bash /dev/stdin
+    curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | sudo bash /dev/stdin -y
 }
 
 # shellcheck source=/dev/null

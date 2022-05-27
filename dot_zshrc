@@ -20,7 +20,8 @@ export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 export ZSH_AUTOSUGGEST_USE_ASYNC=true
 
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=~/.local/bin:$PATH
 
 # Set path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
@@ -243,3 +244,6 @@ fi
 if [ -f "$HOME"/.bash_extras ]; then
     \. "$HOME"/.bash_extras
 fi
+
+# Rust
+PATH=~/.cargo/bin/:$PATH
