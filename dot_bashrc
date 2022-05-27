@@ -39,8 +39,10 @@ set -o noclobber;
 # Set preferred editor for local and remote sessions.
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='vim'
-elif command -v mvim > /dev/null; then
-    export EDITOR='mvim'
+elif command -v lvim > /dev/null; then
+    export EDITOR='lvim'
+elif command -v nvim > /dev/null; then
+    export EDITOR='nvim'
 else
     export EDITOR='vim'
 fi
