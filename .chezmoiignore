@@ -22,3 +22,6 @@ dot_Brewfile
 {{ if ne .chezmoi.os "windows" -}}
 dot_config/windows_terminal
 {{- end }}
+
+#Ignore lunarvim packer compiled file
+dot_config/lvim/plugin/packer_compiled.lua

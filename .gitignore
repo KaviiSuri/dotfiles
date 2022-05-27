@@ -16,3 +16,4 @@ dot_oh-my-zsh
 dot_tmux
 dot_vim_runtime
 node_modules
+dot_config/lvim/plugin/packer_compiled.lua
