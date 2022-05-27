@@ -92,7 +92,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    # asdf                    # Integrates with ASDF extendable version manager
+    asdf                    # Integrates with ASDF extendable version manager
     colored-man-pages       # Adds colors to man pages
     common-aliases          # Aliases for many commonly used commands
     cp                      # Secure `cpv` function that uses `rsync`
@@ -113,7 +113,7 @@ plugins=(
 #    symfony2                # Completion for [Symfony 2](https://symfony.com/)
 if [[ "$OSTYPE" =~ ^darwin ]]; then
     plugins+=(
-        osx                 # Utilities for macOS
+        macos                 # Utilities for macOS
     )
 fi
 # (debian, dnf, fedora, ubuntu)
