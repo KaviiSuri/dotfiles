@@ -59,7 +59,11 @@ setup_dependencies() {
 
     # Install Rust
     printf -- "%sInstalling/updating Rust...%s\n" "$BLUE" "$RESET"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    if ! command -v rustup > /dev/null; then
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    else 
+      rustup update
+    fi
 }
 
 setup_prompts() {
@@ -69,8 +73,12 @@ setup_prompts() {
 setup_applications() {
     printf -- "\n%sSetting up CLI applications:%s\n\n" "$BOLD" "$RESET"
     printf -- "\n%sInstalling Neovim:%s\n\n" "$BLUE" "$RESET"
-    curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release | sudo bash /dev/stdin
-    curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | sudo bash /dev/stdin -y
+    if ! command -v nvim > /dev/null; then
+      curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release | sudo bash /dev/stdin
+    fi
+    if ! command -v lvim > /dev/null; then 
+      curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash /dev/stdin -y
+    fi
 }
 
 # shellcheck source=/dev/null
@@ -105,7 +113,7 @@ setup_devtools() {
     asdf plugin add golang
     asdf plugin add nodejs
     asdf plugin add php
-    asdf plugin add python
+    # asdf plugin add python
     asdf plugin add ruby
     asdf plugin update --all
 

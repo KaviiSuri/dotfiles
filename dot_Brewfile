@@ -14,6 +14,7 @@ tap "homebrew/cask"
 tap "homebrew/core"
 tap "homebrew/services"
 tap "homebrew/homebrew-cask-fonts"
+tap "jesseduffield/lazygit"
 
 brew "asdf"                                 # Extendable version manager
 brew "autoconf"                             # Configuration shell script maker
@@ -55,6 +56,7 @@ brew "wget"                                 # Web content downloader
 brew "zlib"                                 # Lossless data-compression library
 brew "eugenmayer/dockersync/unox"           # Docker sync daemon
 brew "heroku/brew/heroku"                   # Heroku CLI
+brew "lazygit"                              # Lazygit GIT GUI
 
 cask "android-platform-tools"               # Android SDK platform-tools
 cask "font-dejavu-sans-mono-nerd-font"   # DejaVu Sans Mono Nerd Font
