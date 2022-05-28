@@ -496,3 +496,39 @@ if command -v curl > /dev/null; then
 else
     alias weather='wget -qO- --compression=auto --timeout=10 "https://wttr.in/?format=%l:+(%C)+%c++%t+\[%h,+%w\]"'
 fi
+
+
+# Docker Related Aliases
+alias default-mongo-up="docker run -d --name default-mongo \
+-v ~/docker-volumes/default-mongo/data:/data/db \
+-p 27017:27017 \
+mongo"
+
+alias default-mongo-kill="docker kill default-mongo"
+
+alias default-mongo-rm="docker rm default-mongo"
+
+alias default-psql-up="docker run -d \
+ --name default-psql \
+ -e POSTGRES_DB=postgres \
+ -e POSTGRES_USER=postgres \
+ -e POSTGRES_PASSWORD=secret \
+ -e PGUSER=postgres \
+ -e PGDATA=/var/lib/postgresql/data \
+ -v ~/docker-volumes/default-postgres/data:/var/lib/postgresql/data \
+ -p 5432:5432 \
+ postgres"
+
+
+alias default-psql-rm="docker rm default-psql"
+alias default-psql-kill="docker kill default-psql"
+
+alias default-mysql-up="docker run -d \
+ --name default-mysql \
+ -e MYSQL_ROOT_PASSWORD=secret\
+ -v ~/docker-volumes/default-mysql/data:/var/lib/mysql\
+ -p 3306:3306\
+ mysql "
+
+alias default-mysql-rm="docker rm default-mysql"
+alias default-mysql-kill="docker kill default-mysql"
