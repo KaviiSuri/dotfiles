@@ -11,14 +11,14 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "onedarker"
+lvim.colorscheme = "dracula"
 
 vim.opt.relativenumber = true
 
 vim.cmd "set whichwrap+=<,>,[,],h,l"
 vim.cmd [[set iskeyword+=-]]
 vim.cmd [[set formatoptions-=cro]] -- TODO: this doesn't seem to work
--- lvim.transparent_window = true
+lvim.transparent_window = true
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 lvim.builtin.dap.active = true
@@ -189,9 +189,9 @@ lvim.plugins = {
     'rust-lang/rust.vim',
     ft = { "rust", "rs" }
   },
-  { "ellisonleao/glow.nvim", branch = 'main' }
+  { "ellisonleao/glow.nvim", branch = 'main' },
+  { 'dracula/vim' }
 }
-
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
 --     {
