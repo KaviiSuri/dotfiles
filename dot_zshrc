@@ -249,12 +249,3 @@ fi
 
 # Rust
 PATH=~/.cargo/bin/:$PATH
-
-if [[ "$OSTYPE" =~ ^darwin ]]; then
-  export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
-  export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
-  export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
-  export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
-  export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
-  export PATH="/usr/local/opt/libpq/bin:$PATH"
-fi
