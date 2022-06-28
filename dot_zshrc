@@ -250,12 +250,12 @@ fi
 # Rust
 PATH=~/.cargo/bin/:$PATH
 
--# pnpm
--export PNPM_HOME="/Users/kavii/Library/pnpm"
--export PATH="$PNPM_HOME:$PATH"
--# pnpm end
--[ -f "/Users/kavii/.ghcup/env" ] && source "/Users/kavii/.ghcup/env" # ghcup-envexport PATH="/opt/homebrew/opt/llvm/bin:$PATH"
--export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+# pnpm
+export PNPM_HOME="/Users/kavii/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
+[ -f "/Users/kavii/.ghcup/env" ] && source "/Users/kavii/.ghcup/env" # ghcup-envexport PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 #GO
 export GOPATH = $HOME/go
