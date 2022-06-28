@@ -58,6 +58,7 @@ brew "eugenmayer/dockersync/unox"           # Docker sync daemon
 brew "heroku/brew/heroku"                   # Heroku CLI
 brew "lazygit"                              # Lazygit GIT GUI
 brew "openssl@1.1"                          # Open SSL 
+brew "go"                                   # GO
 
 cask "android-platform-tools"               # Android SDK platform-tools
 cask "font-dejavu-sans-mono-nerd-font"   # DejaVu Sans Mono Nerd Font

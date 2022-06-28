@@ -19,6 +19,10 @@ vim.cmd "set whichwrap+=<,>,[,],h,l"
 vim.cmd [[set iskeyword+=-]]
 vim.cmd [[set formatoptions-=cro]] -- TODO: this doesn't seem to work
 lvim.transparent_window = true
+vim.cmd [[
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat=%f:%l:%c:%m
+]]
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 lvim.builtin.dap.active = true
