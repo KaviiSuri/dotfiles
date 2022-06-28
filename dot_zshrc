@@ -258,5 +258,5 @@ export PATH="$PNPM_HOME:$PATH"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 #GO
-export GOPATH = $HOME/go
-export PATH = $PATH:$GOPATH/bin
+export GOPATH="$HOME/go"
+export PATH="$PATH:$GOPATH/bin"
