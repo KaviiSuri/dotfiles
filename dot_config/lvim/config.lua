@@ -197,7 +197,8 @@ lvim.plugins = {
     ft = { "rust", "rs" }
   },
   { "ellisonleao/glow.nvim", branch = 'main' },
-  { 'dracula/vim' }
+  { 'dracula/vim' },
+  { 'APZelos/blamer.nvim' }
 }
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
