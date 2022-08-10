@@ -271,7 +271,7 @@ export PATH="$PATH:$GOPATH/bin"
 # export HTTPS_PROXY=$ALL_PROXY
 
 
-if ["$HTTP_PROXY" != ""]; then
+if [ -n "$HTTP_PROXY"]; then
   git config --global http.proxy $HTTP_PROXY
   npm config set proxy $HTTP_PROXY
 else
@@ -279,7 +279,7 @@ else
   npm config delete proxy
 fi
 
-if ["$HTTPS_PROXY" != ""]; then
+if [ -n "$HTTPS_PROXY"]; then
   git config --global https.proxy $HTTPS_PROXY
   npm config set https-proxy $HTTPS_PROXY
 else
