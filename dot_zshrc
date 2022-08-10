@@ -248,9 +248,11 @@ if [ -f "$HOME"/.bash_extras ]; then
 fi
 
 # Rust
+# -----------------------------------------------------------------------------
 PATH=~/.cargo/bin/:$PATH
 
 # pnpm
+# -----------------------------------------------------------------------------
 export PNPM_HOME="/Users/kavii/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
@@ -260,3 +262,27 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 #GO
 export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin"
+
+
+# PROXY CONFIG
+# -----------------------------------------------------------------------------
+# export ALL_PROXY=172.16.199.20:8080
+# export HTTP_PROXY=$ALL_PROXY
+# export HTTPS_PROXY=$ALL_PROXY
+
+
+if ["$HTTP_PROXY" != ""]; then
+  git config --global http.proxy $HTTP_PROXY
+  npm config set proxy $HTTP_PROXY
+else
+  git config --global --unset http.proxy
+  npm config delete proxy
+fi
+
+if ["$HTTPS_PROXY" != ""]; then
+  git config --global https.proxy $HTTPS_PROXY
+  npm config set https-proxy $HTTPS_PROXY
+else
+  git config --global --unset https.proxy
+  npm config delete https-proxy
+fi
