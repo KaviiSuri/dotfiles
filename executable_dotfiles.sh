@@ -64,6 +64,14 @@ setup_dependencies() {
     else 
       rustup update
     fi
+
+    # Install SDKManager
+    printf -- "%sInstalling/updating SDKManager...%s\n" "$BLUE" "$RESET"
+    if ! command -v sdk > /dev/null; then
+      curl -s "https://get.sdkman.io" | bash
+    else 
+      sdk selfupdate
+    fi
 }
 
 setup_prompts() {
