@@ -30,6 +30,8 @@ lvim.builtin.dap.active = true
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.normal_mode["<S-h>"] = ":bprev<cr>"
+lvim.keys.normal_mode["<S-l>"] = ":bnext<cr>"
 -- unmap a default keymapping
 -- lvim.keys.normal_mode["<C-Up>"] = false
 -- edit a default keymapping
@@ -82,7 +84,7 @@ lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
-lvim.builtin.nvimtree.show_icons.git = 0
+-- lvim.builtin.nvimtree.show_icons.git = 0
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -106,7 +108,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- generic LSP settings
 
 -- ---@usage disable automatic installation of servers
-lvim.lsp.automatic_servers_installation = true
+-- lvim.lsp.automatic_servers_installation = true
 
 -- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
@@ -173,22 +175,62 @@ lvim.plugins = {
   {
     "simrat39/rust-tools.nvim",
     config = function()
-      local lsp_installer_servers = require "nvim-lsp-installer.servers"
-      local _, requested_server = lsp_installer_servers.get_server "rust_analyzer"
-      require("rust-tools").setup({
+      local status_ok, rust_tools = pcall(require, "rust-tools")
+      if not status_ok then
+        return
+      end
+
+      local opts = {
         tools = {
-          autoSetHints = true,
-          hover_with_actions = true,
-          runnables = {
-            use_telescope = true,
+          executor = require("rust-tools/executors").termopen, -- can be quickfix or termopen
+          reload_workspace_from_cargo_toml = true,
+          inlay_hints = {
+            auto = true,
+            only_current_line = false,
+            show_parameter_hints = true,
+            parameter_hints_prefix = "<-",
+            other_hints_prefix = "=>",
+            max_len_align = false,
+            max_len_align_padding = 1,
+            right_align = false,
+            right_align_padding = 7,
+            highlight = "Comment",
+          },
+          hover_actions = {
+            --border = {
+            --        { "╭", "FloatBorder" },
+            --        { "─", "FloatBorder" },
+            --        { "╮", "FloatBorder" },
+            --        { "│", "FloatBorder" },
+            --        { "╯", "FloatBorder" },
+            --        { "─", "FloatBorder" },
+            --        { "╰", "FloatBorder" },
+            --        { "│", "FloatBorder" },
+            --},
+            auto_focus = true,
           },
         },
         server = {
-          cmd_env = requested_server._default_options.cmd_env,
           on_attach = require("lvim.lsp").common_on_attach,
           on_init = require("lvim.lsp").common_on_init,
+          settings = {
+            ["rust-analyzer"] = {
+              checkOnSave = {
+                command = "clippy"
+              }
+            }
+          },
         },
-      })
+      }
+      --local extension_path = vim.fn.expand "~/" .. ".vscode/extensions/vadimcn.vscode-lldb-1.7.3/"
+
+      --local codelldb_path = extension_path .. "adapter/codelldb"
+      --local liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
+
+      --opts.dap = {
+      --        adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+      --}
+      rust_tools.setup(opts)
     end,
     ft = { "rust", "rs" },
   },
@@ -198,8 +240,21 @@ lvim.plugins = {
   },
   { "ellisonleao/glow.nvim", branch = 'main' },
   { 'dracula/vim' },
-  { 'APZelos/blamer.nvim' }
+  { 'APZelos/blamer.nvim' },
+  { 'ThePrimeagen/git-worktree.nvim',
+    config = function()
+      require("git-worktree").setup()
+    end
+  },
+  { 'DingDean/wgsl.vim', ft = "wgsl" },
+  { 'christoomey/vim-tmux-navigator' }
 }
+require 'lspconfig'.tailwindcss.setup {}
+require 'lspconfig'.svelte.setup {}
+
+lvim.builtin.telescope.on_config_done = function(telescope)
+  pcall(telescope.load_extension, "git_worktree")
+end
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
 --     {
