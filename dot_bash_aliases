@@ -518,7 +518,7 @@ alias default-psql-up="docker run -d \
  -e PGDATA=/var/lib/postgresql/data \
  -v ~/docker-volumes/default-postgres/data:/var/lib/postgresql/data \
  -p 5432:5432 \
- postgres"
+ postgres:10.18"
 
 
 alias default-psql-rm="docker rm default-psql"
