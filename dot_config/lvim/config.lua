@@ -1,5 +1,6 @@
 require("user.plugins")
 require("user.options")
+require("user.utils.ripgrep")
 require("user.bqf")
 require("user.colorizer")
 require("user.fidget")

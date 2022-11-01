@@ -42,5 +42,8 @@ lvim.plugins = {
   "monaqa/dial.nvim",
   "dracula/vim",
   "ellisonleao/glow.nvim",
-  "kdheepak/lazygit.nvim"
+  "kdheepak/lazygit.nvim",
+  "tpope/vim-bundler",
+  "tpope/vim-rails",
+  "tpope/vim-dispatch",
 }
