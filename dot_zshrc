@@ -266,6 +266,9 @@ export PATH="$PATH:$GOPATH/bin"
 
 # PROXY CONFIG
 # -----------------------------------------------------------------------------
+unset ALL_PROXY
+unset HTTP_PROXY
+unset HTTPS_PROXY
 # export ALL_PROXY=172.16.199.20:8080
 # export HTTP_PROXY=$ALL_PROXY
 # export HTTPS_PROXY=$ALL_PROXY
