@@ -1,0 +1,90 @@
+# Themer Alacritty
+
+schemes:
+  themer-dark: &dark
+    primary:
+      background: '#0a0216'
+      foreground: '#d8d6db'
+
+    cursor:
+      text: '#0a0216'
+      cursor: '#7635de'
+
+    selection:
+      text: '#0a0216'
+      background: '#305dfb'
+
+    normal:
+      black: '#4f4958'
+      red: '#f54456'
+      green: '#91e827'
+      yellow: '#d6cd00'
+      blue: '#305dfb'
+      magenta: '#f98fd1'
+      cyan: '#00c580'
+      white: '#d8d6db'
+
+    bright:
+      black: '#716c79'
+      red: '#F66877'
+      green: '#A6EB52'
+      yellow: '#DDD632'
+      blue: '#587CFB'
+      magenta: '#F9A4DA'
+      cyan: '#32CF99'
+      white: '#faf9fc'
+
+    dim:
+      black: '#2c2537'
+      red: '#C63749'
+      green: '#76BA24'
+      yellow: '#ADA404'
+      blue: '#284BCD'
+      magenta: '#C973AC'
+      cyan: '#029E6B'
+      white: '#b5b2ba'
+  
+
+  themer-light: &light
+    primary:
+      background: '#ffffff'
+      foreground: '#2d2637'
+
+    cursor:
+      text: '#ffffff'
+      cursor: '#4300ac'
+
+    selection:
+      text: '#ffffff'
+      background: '#0029bb'
+
+    normal:
+      black: '#2d2637'
+      red: '#b20718'
+      green: '#4bad00'
+      yellow: '#938c00'
+      blue: '#0029bb'
+      magenta: '#a63f80'
+      cyan: '#3f9373'
+      white: '#b9b7bc'
+
+    bright:
+      black: '#504a59'
+      red: '#C13946'
+      green: '#6FBD33'
+      yellow: '#A9A333'
+      blue: '#3354C9'
+      magenta: '#B86599'
+      cyan: '#65A98F'
+      white: '#dcdbde'
+
+    dim:
+      black: '#0a0216'
+      red: '#900618'
+      green: '#3E8B04'
+      yellow: '#787004'
+      blue: '#02219A'
+      magenta: '#87336B'
+      cyan: '#347660'
+      white: '#96939b'
+  

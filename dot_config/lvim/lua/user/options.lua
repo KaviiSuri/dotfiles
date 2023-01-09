@@ -13,7 +13,7 @@ lvim.builtin.dap.active = true
 lvim.builtin.cmp.cmdline.enable = false
 vim.opt.showtabline = 0
 
-lvim.colorscheme = "tokyonight"
+lvim.colorscheme = "ThemerVim"
 lvim.leader = "space"
 lvim.transparent_window = true
 
