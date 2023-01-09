@@ -18,7 +18,9 @@ lvim.keys.normal_mode["Q"] = "<cmd>Bdelete!<CR>"
 
 lvim.keys.normal_mode["<S-tab>"] = "<cmd>lua require('telescope.builtin').buffers(require('telescope.themes').get_dropdown{previewer = false, initial_mode='normal'})<cr>"
 
-M.show_documentation = function()
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true })
+
+Mshow_documentation = function()
   local filetype = vim.bo.filetype
   if vim.tbl_contains({ "vim", "help" }, filetype) then
     vim.cmd("h " .. vim.fn.expand "<cword>")
@@ -34,3 +36,4 @@ end
 lvim.keys.normal_mode["K"] = ":lua require('user.keymaps').show_documentation()<CR>"
 
 return M
+
