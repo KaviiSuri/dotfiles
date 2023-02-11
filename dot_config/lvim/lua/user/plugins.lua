@@ -46,4 +46,13 @@ lvim.plugins = {
   "tpope/vim-bundler",
   "tpope/vim-rails",
   "tpope/vim-dispatch",
+  {
+    "Equilibris/nx.nvim",
+    requires = {
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("nx").setup {}
+    end
+  }
 }

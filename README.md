@@ -26,6 +26,12 @@ Universal command set and colourful shell configurations for Bash, Zsh and Power
 
 <p align="right"><a href="#top" title="Back to top">🔝</a></p>
 
+## Theme
+Your theme's unique URL:
+
+https://themer.dev/?colors.dark.shade0=%230A0216&colors.dark.shade7=%23FAF9FC&colors.dark.accent0=%23F54456&colors.dark.accent1=%23FC7022&colors.dark.accent2=%23D6CD00&colors.dark.accent3=%2391E827&colors.dark.accent4=%2300C580&colors.dark.accent5=%23305DFB&colors.dark.accent6=%237635DE&colors.dark.accent7=%23F98FD1&colors.light.shade0=%23FFFFFF&colors.light.shade7=%230A0216&colors.light.accent0=%23B20718&colors.light.accent1=%23D55913&colors.light.accent2=%23938C00&colors.light.accent3=%234BAD00&colors.light.accent4=%233F9373&colors.light.accent5=%230029BB&colors.light.accent6=%234300AC&colors.light.accent7=%23A63F80&activeColorSet=dark&calculateIntermediaryShades.dark=true&calculateIntermediaryShades.light=true
+
+
 ## Supported toolset 🛠️
 
 Use either one or many of these, the config files will be in place and ready to provide a familiar interface.

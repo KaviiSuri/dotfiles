@@ -16,6 +16,12 @@ lvim.builtin.which_key.mappings["l"]["h"] = { "<cmd>lua require('lsp-inlayhints'
 lvim.builtin.which_key.mappings["X"] = { ":lua require('user.utils.hexmode').Toggle()<cr>", "Toggle HexMode" }
 lvim.builtin.which_key.mappings["gy"] = { "Link" }
 
+lvim.builtin.which_key.mappings["n"] = {
+  name = "Nx",
+  a = { "<cmd>Telescope nx actions<Cr>", "Nx Actions" },
+  g = { "<cmd>Telescope nx generators<Cr>", "Nx Generators" },
+}
+
 lvim.builtin.which_key.mappings["l"]["f"] = {
   function()
     require("lvim.lsp.utils").format { timeout_ms = 10000 }
