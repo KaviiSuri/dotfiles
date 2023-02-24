@@ -266,30 +266,10 @@ export PATH="$PATH:$GOPATH/bin"
 
 # PROXY CONFIG
 # -----------------------------------------------------------------------------
-unset ALL_PROXY
-unset HTTP_PROXY
-unset HTTPS_PROXY
-# export ALL_PROXY=172.16.199.20:8080
-# export HTTP_PROXY=$ALL_PROXY
-# export HTTPS_PROXY=$ALL_PROXY
+alias conf-proxy="~/conf-proxy/main.sh"
+source ./conf-proxy/proxy-conf.sh
 
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-if [ -n "$HTTP_PROXY" ]; then
-  echo "Setting Up For Http Proxy"
-  git config --global http.proxy $HTTP_PROXY
-  npm config set proxy $HTTP_PROXY
-else
-  echo "No Http Proxy Found"
-  git config --global --unset http.proxy
-  npm config delete proxy
-fi
-
-if [ -n "$HTTPS_PROXY" ]; then
-  echo "Setting Up for Https Proxy"
-  git config --global https.proxy $HTTPS_PROXY
-  npm config set https-proxy $HTTPS_PROXY
-else
-  echo "No Https Proxy Found"
-  git config --global --unset https.proxy
-  npm config delete https-proxy
-fi
