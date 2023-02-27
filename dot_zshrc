@@ -253,7 +253,7 @@ PATH=~/.cargo/bin/:$PATH
 
 # pnpm
 # -----------------------------------------------------------------------------
-export PNPM_HOME="/Users/kavii/Library/pnpm"
+export PNPM_HOME="/Users/kaviisuri/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 [ -f "/Users/kavii/.ghcup/env" ] && source "/Users/kavii/.ghcup/env" # ghcup-envexport PATH="/opt/homebrew/opt/llvm/bin:$PATH"
@@ -267,9 +267,8 @@ export PATH="$PATH:$GOPATH/bin"
 # PROXY CONFIG
 # -----------------------------------------------------------------------------
 alias conf-proxy="~/conf-proxy/main.sh"
-source ./conf-proxy/proxy-conf.sh
+source ~/conf-proxy/proxy-conf.sh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
