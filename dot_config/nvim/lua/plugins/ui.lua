@@ -12,4 +12,5 @@ return {
     },
   },
   "ellisonleao/glow.nvim",
+  { "akinsho/toggleterm.nvim", version = "*", config = true },
 }
