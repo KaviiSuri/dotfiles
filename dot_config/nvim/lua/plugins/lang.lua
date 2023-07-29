@@ -16,9 +16,11 @@ return {
   -- Tailwind
   {
     "neovim/nvim-lspconfig",
-    opts = function(_, opts)
-      opts.servers.tailwindcss = {}
-    end,
+    opts = {
+      servers = {
+        tailwindcss = {},
+      },
+    },
   },
   {
     "laytan/tailwind-sorter.nvim",

@@ -13,4 +13,9 @@ return {
   },
   "ellisonleao/glow.nvim",
   { "akinsho/toggleterm.nvim", version = "*", config = true },
+  "f-person/git-blame.nvim",
+  {
+    "chentoast/marks.nvim",
+    opts = {},
+  },
 }

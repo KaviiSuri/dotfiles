@@ -4,3 +4,13 @@
 vim.opt.winbar = "%=%m %f"
 
 vim.opt.grepprg = "rg --vimgrep --no-heading --smart-case"
+
+vim.opt.foldmethod = "syntax"
+
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = vim.fn.stdpath("cache") .. "/undo"
+vim.opt.undofile = true
+
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
