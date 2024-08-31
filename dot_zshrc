@@ -285,3 +285,5 @@ export PATH="$HOME/tools/google-cloud-sdk/bin:$PATH"
 # Github
 export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 eval "$(pyenv init --path)"
+
+source ./secrets.sh

@@ -93,6 +93,40 @@ config.keys = {
 		key = "UpArrow",
 		action = wezterm.action.AdjustPaneSize({ "Up", 5 }),
 	},
+	{
+		mods = "LEADER",
+		key = "s",
+		action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
+	},
+	{
+		key = "w",
+		mods = "LEADER",
+		action = wezterm.action.PromptInputLine({
+			description = wezterm.format({
+				{ Attribute = { Intensity = "Bold" } },
+				{ Foreground = { AnsiColor = "Fuchsia" } },
+				{ Text = "Enter name for new workspace" },
+			}),
+			action = wezterm.action_callback(function(window, pane, line)
+				-- line will be `nil` if they hit escape without entering anything
+				-- An empty string if they just hit enter
+				-- Or the actual line of text they wrote
+				if line then
+					window:perform_action(
+						wezterm.action.SwitchToWorkspace({
+							name = line,
+						}),
+						pane
+					)
+				end
+			end),
+		}),
+	},
+	{
+		key = "k",
+		mods = "LEADER",
+		action = wezterm.action.ActivateCommandPalette,
+	},
 }
 
 for i = 0, 9 do
@@ -131,6 +165,28 @@ wezterm.on("update-right-status", function(window, _)
 		ARROW_FOREGROUND,
 		{ Text = SOLID_LEFT_ARROW },
 	}))
+end)
+
+wezterm.on("update-right-status", function(window, pane)
+	window:set_right_status(window:active_workspace())
+end)
+
+wezterm.on("augment-command-palette", function(window, pane)
+	return {
+		{
+			brief = "Rename tab",
+			icon = "md_rename_box",
+
+			action = wezterm.action.PromptInputLine({
+				description = "Enter new name for tab",
+				action = wezterm.action_callback(function(window, pane, line)
+					if line then
+						window:active_tab():set_title(line)
+					end
+				end),
+			}),
+		},
+	}
 end)
 
 -- and finally, return the configuration to wezterm
