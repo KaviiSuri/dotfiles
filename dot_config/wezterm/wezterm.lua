@@ -127,6 +127,11 @@ config.keys = {
 		mods = "LEADER",
 		action = wezterm.action.ActivateCommandPalette,
 	},
+	{
+		key = "z",
+		mods = "LEADER",
+		action = wezterm.action.TogglePaneZoomState,
+	},
 }
 
 for i = 0, 9 do

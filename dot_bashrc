@@ -394,4 +394,4 @@ printf(((NR==1)?"":":")$0)}}')";
 export PATH
 . "$HOME/.cargo/env"
 
-source ./secrets.sh
+source ~/secrets.sh
