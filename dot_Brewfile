@@ -10,10 +10,10 @@ tap "buo/cask-upgrade"
 tap "eugenmayer/dockersync"
 tap "heroku/brew"
 tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/core"
+# tap "homebrew/cask"
+# tap "homebrew/core"
 tap "homebrew/services"
-tap "homebrew/cask-fonts"
+# tap "homebrew/cask-fonts"
 tap "jesseduffield/lazygit"
 
 brew "asdf"                                 # Extendable version manager
@@ -49,8 +49,8 @@ brew "rsync"                                # File transfer and sync tool
 # brew "screenfetch"                          # Screenshot information tool
 # brew "starship"                             # Starship cross-shell prompt
 # brew "telnet"                               # Virtual terminal client
-brew "tmux"
-brew "tmuxinator"                           # Tmux session controller
+# brew "tmux"
+# brew "tmuxinator"                           # Tmux session controller
 # brew "travis"                               # Travis CI client
 # brew "unison"                               # Unison file synchronizer
 brew "wget"                                 # Web content downloader
@@ -59,7 +59,9 @@ brew "wget"                                 # Web content downloader
 # brew "heroku/brew/heroku"                   # Heroku CLI
 brew "lazygit"                              # Lazygit GIT GUI
 brew "openssl@1.1"                          # Open SSL 
-brew "go"                                   # GO
+# brew "go"                                   # GO
+brew "neovim"
+brew "starship"
 
 # cask "android-platform-tools"               # Android SDK platform-tools
 cask "amethyst"
@@ -67,4 +69,6 @@ cask "font-dejavu-sans-mono-nerd-font"   # DejaVu Sans Mono Nerd Font
 cask "font-fira-code-nerd-font"             # Fira Code Nerd Font
 cask "font-hack-nerd-font"                  # Hack Mono Nerd Font
 # cask "powershell"                           # Cross-platform shell
-cask "alacritty"                            # Terminal Emulator
+# cask "alacritty"                            # Terminal Emulator
+cask "wezterm"
+cask "karabiner-elements"

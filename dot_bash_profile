@@ -24,3 +24,8 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+. "$HOME/.cargo/env"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/kaviisuri/.sdkman"
+[[ -s "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh"
