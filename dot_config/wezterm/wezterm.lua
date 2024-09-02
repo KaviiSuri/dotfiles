@@ -123,7 +123,7 @@ config.keys = {
 		}),
 	},
 	{
-		key = "k",
+		key = "p",
 		mods = "LEADER",
 		action = wezterm.action.ActivateCommandPalette,
 	},
