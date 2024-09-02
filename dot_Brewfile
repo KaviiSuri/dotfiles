@@ -62,6 +62,7 @@ brew "openssl@1.1"                          # Open SSL
 # brew "go"                                   # GO
 brew "neovim"
 brew "starship"
+brew "bitwarden-cli"
 
 # cask "android-platform-tools"               # Android SDK platform-tools
 cask "amethyst"
