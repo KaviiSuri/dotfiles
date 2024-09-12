@@ -95,6 +95,12 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 vim.g.transparent_enabled = true
 
+vim.g.netrw_banner = 0 -- Disable the banner at the top
+vim.g.netrw_liststyle = 3 -- Tree-style listing by default
+vim.g.netrw_browse_split = 4 -- Open files in a new tab
+vim.g.netrw_altv = 1 -- Open vertical splits by default
+vim.g.netrw_winsize = 30 -- Set window size to 30% of the screen
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -705,7 +711,10 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },

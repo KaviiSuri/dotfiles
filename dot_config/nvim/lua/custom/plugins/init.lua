@@ -4,4 +4,5 @@
 -- See the kickstart.nvim README for more information
 return {
   'xiyaowong/transparent.nvim',
+  'f-person/git-blame.nvim',
 }
