@@ -95,11 +95,9 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 vim.g.transparent_enabled = true
 
-vim.g.netrw_banner = 0 -- Disable the banner at the top
-vim.g.netrw_liststyle = 3 -- Tree-style listing by default
-vim.g.netrw_browse_split = 4 -- Open files in a new tab
-vim.g.netrw_altv = 1 -- Open vertical splits by default
-vim.g.netrw_winsize = 30 -- Set window size to 30% of the screen
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -715,6 +713,7 @@ require('lazy').setup({
         javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        svelte = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },

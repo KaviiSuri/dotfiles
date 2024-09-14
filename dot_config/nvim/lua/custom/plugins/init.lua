@@ -5,4 +5,12 @@
 return {
   'xiyaowong/transparent.nvim',
   'f-person/git-blame.nvim',
+  {
+    'nvim-tree/nvim-tree.lua',
+    opts = {
+      update_focused_file = {
+        enable = true,
+      },
+    },
+  },
 }
