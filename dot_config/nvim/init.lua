@@ -962,6 +962,10 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+  dev = {
+    path = '~/code/',
+    patterns = { 'KaviiSuri' },
+  },
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
