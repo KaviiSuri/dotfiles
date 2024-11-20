@@ -1,7 +1,7 @@
 return {
+  'f-person/git-blame.nvim',
   {
     'kdheepak/lazygit.nvim',
-
     dependencies = {
       'nvim-lua/plenary.nvim',
     },
@@ -73,7 +73,7 @@ return {
     },
     config = function()
       require('octo').setup {
-        use_local_fs = false, -- use local files on right side of reviews
+        use_local_fs = true, -- use local files on right side of reviews
         enable_builtin = false, -- shows a list of builtin actions when no action is provided
         default_remote = { 'upstream', 'origin' }, -- order to try remotes
         default_merge_method = 'commit', -- default merge method which should be used when calling `Octo pr merge`, could be `commit`, `rebase` or `squash`
@@ -268,6 +268,9 @@ return {
             close_review_tab = { lhs = '<C-c>', desc = 'close review tab' },
             toggle_viewed = { lhs = '<leader><space>', desc = 'toggle viewer viewed state' },
           },
+        },
+        suppress_missing_scope = {
+          projects_v2 = true,
         },
       }
     end,

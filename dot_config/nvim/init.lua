@@ -406,6 +406,7 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+      pcall(require('telescope').load_extension, 'rest')
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -603,6 +604,22 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+      local util = require 'lspconfig/util'
+      local function root_pattern_excludes(opt)
+        local root = opt.root
+        local exclude = opt.exclude
+
+        local function matches(path, pattern)
+          return 0 < #vim.fn.glob(util.path.join(path, pattern))
+        end
+
+        return function(startpath)
+          local m = util.search_ancestors(startpath, function(path)
+            return matches(path, root) and not matches(path, exclude)
+          end)
+          return m
+        end
+      end
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
       --
@@ -638,6 +655,19 @@ require('lazy').setup({
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
+          },
+        },
+        ts_ls = {
+          root_dir = root_pattern_excludes {
+            root = 'package.json',
+            exclude = 'deno.json',
+          },
+          single_file_support = false,
+        },
+        denols = {
+          root_dir = root_pattern_excludes {
+            root = 'deno.json',
+            exclude = 'package.json',
           },
         },
       }
@@ -689,22 +719,7 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        local lsp_format_opt
-        if disable_filetypes[vim.bo[bufnr].filetype] then
-          lsp_format_opt = 'never'
-        else
-          lsp_format_opt = 'fallback'
-        end
-        return {
-          timeout_ms = 500,
-          lsp_format = lsp_format_opt,
-        }
-      end,
+      format_on_save = false,
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -715,6 +730,7 @@ require('lazy').setup({
         javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
         svelte = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
@@ -755,6 +771,7 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'petertriho/cmp-git',
     },
     config = function()
       -- See `:help cmp`
@@ -769,19 +786,15 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
+    opts = {
+      on_colors = function(colors)
+        colors.comment = '#a89f66'
+      end,
+    },
     init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
     end,
   },
-
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',

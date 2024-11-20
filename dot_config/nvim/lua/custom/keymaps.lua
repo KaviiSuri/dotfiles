@@ -1,11 +1,7 @@
--- require('which-key').add {
---   {
---     '<leader>ew',
---     desc = 'Toggle [E]xplorer at current [W]indow',
---   },
---   {
---     '<leader>er',
---     '<cmd>:NvimTreeToggle<CR>',
---     desc = 'Toggle [E]xplorer at [R]oot',
---   },
--- }
+require('which-key').add {
+  {
+    '<leader>tt',
+    '<cmd>TransparentToggle<CR>',
+    desc = '[T]oggle [T]ransparency',
+  },
+}

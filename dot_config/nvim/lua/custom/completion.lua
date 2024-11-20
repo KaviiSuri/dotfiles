@@ -56,8 +56,16 @@ cmp.setup {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
     { name = 'path' },
+    { name = 'git' },
   },
 }
+
+cmp.setup.filetype({ 'sql' }, {
+  sources = {
+    { name = 'vim-dadbod-completion' },
+    { name = 'buffer' },
+  },
+})
 
 function ReloadSnips()
   for _, ft_path in ipairs(vim.api.nvim_get_runtime_file('lua/custom/snippets/*.lua', true)) do
