@@ -11,7 +11,7 @@ if wezterm.config_builder then
 end
 
 -- For example, changing the color scheme:
-config.color_scheme = "Catppuccin Macchiato"
+config.color_scheme = "tokyonight_night"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
 config.font_size = 16
 config.window_background_opacity = 0.7
