@@ -316,7 +316,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # Enable Python version management.
 if command -v pyenv > /dev/null; then
-    eval "$(pyenv init -)"
+    eval "$(pyenv init --path)"
 fi
 
 # Provide Python completions.
@@ -395,3 +395,4 @@ export PATH
 . "$HOME/.cargo/env"
 
 source ~/secrets.sh
+. "/Users/kaviisuri/.deno/env"

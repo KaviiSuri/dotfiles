@@ -89,7 +89,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -420,6 +420,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>sc', builtin.commands, { desc = '[S]earch [C]ommands' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -522,7 +523,9 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', function()
+            require('telescope.builtin').lsp_definitions { jump_type = 'vsplit' }
+          end, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -668,6 +671,38 @@ require('lazy').setup({
           root_dir = root_pattern_excludes {
             root = 'deno.json',
             exclude = 'package.json',
+          },
+        },
+        tailwindcss = {
+          settings = {
+            tailwindCSS = {
+              experimental = {
+                classRegex = {
+                  'cva\\(([^)]*)\\)',
+                  '["\'`]([^"\'`]*).*?["\'`]',
+                },
+              },
+            },
+          },
+        },
+        ['sonarlint-language-server'] = {
+          server = {
+            cmd = {
+              'sonarlint-language-server',
+              '-stdio',
+              '-analyzers',
+              vim.fn.expand '$MASON/share/sonarlint-analyzers/sonarjs.jar',
+              vim.fn.expand '$MASON/share/sonarlint-analyzers/sonarhtml.jar',
+              vim.fn.expand '$MASON/share/sonarlint-analyzers/sonartext.jar',
+              vim.fn.expand '$MASON/share/sonarlint-analyzers/sonarcfamily.jar',
+            },
+          },
+          filetypes = {
+            'javascript',
+            'javascriptreact',
+            'typescript',
+            'typescriptreact',
+            'svelte',
           },
         },
       }

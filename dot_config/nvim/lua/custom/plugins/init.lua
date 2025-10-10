@@ -3,9 +3,9 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  {
-    dir = '~/code/KaviiSuri/stackmap.nvim',
-  },
+  -- {
+  --   dir = '~/code/KaviiSuri/stackmap.nvim',
+  -- },
   {
     'davidmh/mdx.nvim',
     config = true,

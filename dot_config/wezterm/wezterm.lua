@@ -132,6 +132,11 @@ config.keys = {
 		mods = "LEADER",
 		action = wezterm.action.TogglePaneZoomState,
 	},
+	{
+		key = "Tab",
+		mods = "SHIFT",
+		action = wezterm.action.SendString("\x1b[Z"),
+	},
 }
 
 for i = 0, 9 do

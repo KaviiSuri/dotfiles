@@ -38,7 +38,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 
-alias notes='cd /Users/kaviisuri/Library/Mobile Documents/iCloud~com~logseq~logseq/Documents/my-notes'
+alias notes='cd /Users/kaviisuri/Library/Mobile\ Documents/iCloud~com~logseq~logseq/Documents/my-notes'
 
 # Colorizes listings.
 if ls --color &> /dev/null; then

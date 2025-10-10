@@ -29,3 +29,4 @@ fi
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/kaviisuri/.sdkman"
 [[ -s "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh"
+. "/Users/kaviisuri/.deno/env"

@@ -44,7 +44,7 @@ import_repo() {
     fi
     TMPFILE=$(mktemp /tmp/dotfiles."${uuid}".tar.gz) || exit 1
     curl -s -L -o "$TMPFILE" "$repo" || exit 1
-    chezmoi import --strip-components 1 --destination "$destination" "$TMPFILE" || exit 1
+    # chezmoi import --strip-components 1 --destination "$destination" "$TMPFILE" || exit 1
     rm -f "$TMPFILE"
 }
 
@@ -84,9 +84,6 @@ setup_applications() {
     if ! command -v nvim > /dev/null; then
       curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release | sudo bash /dev/stdin
     fi
-    if ! command -v lvim > /dev/null; then 
-      curl -s https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh | bash /dev/stdin -y
-    fi
 }
 
 # shellcheck source=/dev/null
@@ -120,36 +117,11 @@ setup_devtools() {
     printf -- "%sInstalling/updating ASDF plugins...%s\n" "$BLUE" "$RESET"
     asdf plugin add golang
     asdf plugin add nodejs
-    asdf plugin add php
     # asdf plugin add python
-    asdf plugin add ruby
     asdf plugin update --all
-
-    printf -- "%sImporting PGP keyrings for ASDF plugins...%s\n" "$BLUE" "$RESET"
-    "$HOME"/.asdf/plugins/nodejs/bin/import-release-team-keyring
 
     asdf install golang latest
     asdf install nodejs latest
-
-    # Install NVM
-    printf -- "%sInstalling/updating Node Version Manager...%s\n" "$BLUE" "$RESET"
-    export NVM_DIR="$HOME/.nvm" && (
-        NVM_NEW=false
-        if [ ! -d "$NVM_DIR" ]; then
-            git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
-            NVM_NEW=true
-        fi
-        cd "$NVM_DIR"
-        if [ ! $NVM_NEW ]; then
-            git fetch --tags origin
-        fi
-        HASH=$(git describe --abbrev=0 --tags --match "v[0-9]*" "$(git rev-list --tags --max-count=1)")
-        git checkout "$HASH"
-    ) && \. "$NVM_DIR/nvm.sh" && \. "$NVM_DIR/bash_completion"
-
-    # Install Node.js
-    printf -- "%sInstalling/updating Node.js...%s\n" "$BLUE" "$RESET"
-    nvm install node
 }
 
 finalize_dotfiles() {
