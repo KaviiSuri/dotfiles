@@ -1,0 +1,4 @@
+theme = dark:TokyoNight Night,light:TokyoNight Day
+background-opacity = 0.8
+background-blur = 20
+window-decoration = none
