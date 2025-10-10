@@ -2,3 +2,16 @@ theme = dark:TokyoNight Night,light:TokyoNight Day
 background-opacity = 0.8
 background-blur = 20
 window-decoration = none
+
+# Split keybindings (tmux-style with ctrl+space prefix)
+keybind = ctrl+space>backslash=new_split:right
+keybind = ctrl+space>minus=new_split:down
+
+# Navigate splits (tmux-style with ctrl+space prefix + hjkl)
+keybind = ctrl+space>h=goto_split:left
+keybind = ctrl+space>j=goto_split:down
+keybind = ctrl+space>k=goto_split:up
+keybind = ctrl+space>l=goto_split:right
+
+# Close split
+keybind = ctrl+space>x=close_surface
