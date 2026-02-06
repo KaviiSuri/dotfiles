@@ -1,0 +1,29 @@
+collections:
+  user-preferences:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/user/preferences
+    pattern: "**/*.md"
+    context:
+      "": User's personal preferences for communication style, tools, workflows, and technology choices
+  user-facts:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/user/facts
+    pattern: "**/*.md"
+    context:
+      "": "Stable facts about the user: job, location, projects, and other personal information"
+  bookmarks:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/bookmarks
+    pattern: "**/*.md"
+    context:
+      "": Bookmarked articles, resources, and reference materials
+  content-ideas:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/ideas
+    pattern: "**/*.md"
+  khushi:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/khushi
+    pattern: "**/*.md"
+    context:
+      "": Everything about Khushi - gift ideas, preferences, memories, and important information
+  maya:
+    path: /Users/kaviisuri/code/KaviiSuri/maya-bot/.maya/knowledge/maya
+    pattern: "**/*.md"
+    context:
+      "": Technical requirements, patterns, and implementation details for the Maya Discord bot

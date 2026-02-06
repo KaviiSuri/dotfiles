@@ -1,5 +1,6 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
+local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
 
 -- This table will hold the configuration.
 local config = {}
@@ -20,9 +21,41 @@ config.macos_window_background_blur = 8
 config.window_decorations = "RESIZE"
 config.automatically_reload_config = true
 
+-- Dedicated SSHMUX domain for Vast dev box.
+-- Using an explicit SshDomain here avoids relying on parsing ~/.ssh/config.
+config.ssh_domains = {
+	{
+		name = "vastai-kavii",
+		remote_address = "171.247.159.187:45446",
+		username = "root",
+		multiplexing = "WezTerm",
+		-- Reduce perceived latency on high-RTT links by echoing keypresses locally.
+		-- If you dislike the behavior, remove this line.
+		local_echo_threshold_ms = 10,
+		ssh_option = {
+			identityfile = (os.getenv("HOME") or "") .. "/.ssh/id_ed25519_speechify",
+		},
+	},
+}
+
 -- tmux
-config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 2000 }
+config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 2000 }
 config.keys = {
+	{
+		mods = "LEADER",
+		key = "g",
+		action = wezterm.action.AttachDomain("vastai-kavii"),
+	},
+	{
+		mods = "LEADER|SHIFT",
+		key = "G",
+		action = wezterm.action.SwitchToWorkspace({
+			name = "vastai",
+			spawn = {
+				domain = { DomainName = "vastai-kavii" },
+			},
+		}),
+	},
 	{
 		mods = "LEADER",
 		key = "c",
@@ -45,7 +78,7 @@ config.keys = {
 	},
 	{
 		mods = "LEADER",
-		key = "|",
+		key = "\\",
 		action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
 	},
 	{
@@ -137,6 +170,39 @@ config.keys = {
 		mods = "SHIFT",
 		action = wezterm.action.SendString("\x1b[Z"),
 	},
+	{
+		key = "S",
+		mods = "LEADER|SHIFT",
+		action = wezterm.action_callback(function(win, pane)
+			resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
+		end),
+	},
+	{
+		key = "R",
+		mods = "LEADER|SHIFT",
+		action = wezterm.action_callback(function(win, pane)
+			resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id, label)
+				local type = string.match(id, "^([^/]+)")
+				id = string.match(id, "([^/]+)$")
+				id = string.match(id, "(.+)%..+$")
+				local opts = {
+					relative = true,
+					restore_text = true,
+					on_pane_restore = resurrect.tab_state.default_on_pane_restore,
+				}
+				if type == "workspace" then
+					local state = resurrect.state_manager.load_state(id, "workspace")
+					resurrect.workspace_state.restore_workspace(state, opts)
+				elseif type == "window" then
+					local state = resurrect.state_manager.load_state(id, "window")
+					resurrect.window_state.restore_window(pane:window(), state, opts)
+				elseif type == "tab" then
+					local state = resurrect.state_manager.load_state(id, "tab")
+					resurrect.tab_state.restore_tab(pane:tab(), state, opts)
+				end
+			end)
+		end),
+	},
 }
 
 for i = 0, 9 do
@@ -198,6 +264,10 @@ wezterm.on("augment-command-palette", function(window, pane)
 		},
 	}
 end)
+
+resurrect.state_manager.periodic_save()
+
+wezterm.on("gui-startup", resurrect.state_manager.resurrect_on_gui_startup)
 
 -- and finally, return the configuration to wezterm
 return config
