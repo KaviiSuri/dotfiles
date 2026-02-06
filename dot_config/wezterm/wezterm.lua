@@ -15,25 +15,22 @@ end
 config.color_scheme = "tokyonight_night"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
 config.font_size = 16
-config.window_background_opacity = 1.0
-config.macos_window_background_blur = 0
+config.window_background_opacity = 0.7
+config.macos_window_background_blur = 7
 
 config.window_decorations = "RESIZE"
 config.automatically_reload_config = true
 
--- Dedicated SSHMUX domain for Vast dev box.
--- Using an explicit SshDomain here avoids relying on parsing ~/.ssh/config.
+-- Dedicated SSH domain for GCP dev box.
 config.ssh_domains = {
 	{
-		name = "vastai-kavii",
-		remote_address = "vastai-kavii",
-		username = "root",
+		name = "kavii-ai-dev",
+		remote_address = "kavii-ai-dev",
+		username = "kavii",
 		multiplexing = "WezTerm",
 		ssh_option = {
 			identityfile = (os.getenv("HOME") or "") .. "/.ssh/id_ed25519_speechify",
 		},
-		local_echo_threshold_ms = 10000,
-		overlay_lag_indicator = true
 	},
 }
 
@@ -43,15 +40,15 @@ config.keys = {
 	{
 		mods = "LEADER",
 		key = "g",
-		action = wezterm.action.AttachDomain("vastai-kavii"),
+		action = wezterm.action.AttachDomain("kavii-ai-dev"),
 	},
 	{
 		mods = "LEADER|SHIFT",
 		key = "G",
 		action = wezterm.action.SwitchToWorkspace({
-			name = "vastai",
+			name = "kavii-ai-dev",
 			spawn = {
-				domain = { DomainName = "vastai-kavii" },
+				domain = { DomainName = "kavii-ai-dev" },
 			},
 		}),
 	},

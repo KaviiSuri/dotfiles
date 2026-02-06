@@ -32,6 +32,12 @@ Host vastai-kavii
     ForwardAgent yes
     LocalForward 8080 localhost:8080
 
+Host kavii-ai-dev
+    HostName kavii-dev-instance
+    User kavii
+    IdentityFile ~/.ssh/id_ed25519_speechify
+    ForwardAgent yes
+
 Host *
     {{ if ne .chezmoi.os "windows" -}}
     # Accelerate connections by reusing existing connections to the same host.
