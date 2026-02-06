@@ -15,8 +15,8 @@ end
 config.color_scheme = "tokyonight_night"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
 config.font_size = 16
-config.window_background_opacity = 0.7
-config.macos_window_background_blur = 8
+config.window_background_opacity = 1.0
+config.macos_window_background_blur = 0
 
 config.window_decorations = "RESIZE"
 config.automatically_reload_config = true
@@ -26,15 +26,14 @@ config.automatically_reload_config = true
 config.ssh_domains = {
 	{
 		name = "vastai-kavii",
-		remote_address = "171.247.159.187:45446",
+		remote_address = "vastai-kavii",
 		username = "root",
 		multiplexing = "WezTerm",
-		-- Reduce perceived latency on high-RTT links by echoing keypresses locally.
-		-- If you dislike the behavior, remove this line.
-		local_echo_threshold_ms = 10,
 		ssh_option = {
 			identityfile = (os.getenv("HOME") or "") .. "/.ssh/id_ed25519_speechify",
 		},
+		local_echo_threshold_ms = 10000,
+		overlay_lag_indicator = true
 	},
 }
 
