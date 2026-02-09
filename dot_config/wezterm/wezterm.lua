@@ -31,6 +31,8 @@ config.ssh_domains = {
 		ssh_option = {
 			identityfile = (os.getenv("HOME") or "") .. "/.ssh/id_ed25519_speechify",
 		},
+		local_echo_threshold_ms = 10000,
+		overlay_lag_indicator = true
 	},
 }
 
