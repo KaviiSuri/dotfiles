@@ -3,6 +3,99 @@
 
 return {
   {
+    'ThePrimeagen/99',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+    keys = {
+      {
+        '<leader>9s',
+        function()
+          require('99').search()
+        end,
+        desc = '99 Search Project',
+      },
+      {
+        '<leader>9o',
+        function()
+          require('99').open()
+        end,
+        desc = '99 Open Last Result',
+      },
+      {
+        '<leader>9x',
+        function()
+          require('99').stop_all_requests()
+        end,
+        desc = '99 Stop Requests',
+      },
+      {
+        '<leader>9c',
+        function()
+          require('99').clear_previous_requests()
+        end,
+        desc = '99 Clear Requests',
+      },
+      {
+        '<leader>9l',
+        function()
+          require('99').view_logs()
+        end,
+        desc = '99 View Logs',
+      },
+      {
+        '<leader>9m',
+        function()
+          require('99.extensions.telescope').select_model()
+        end,
+        desc = '99 Select Model',
+      },
+      {
+        '<leader>9p',
+        function()
+          require('99.extensions.telescope').select_provider()
+        end,
+        desc = '99 Select Provider',
+      },
+      {
+        '<leader>9w',
+        function()
+          require('99').vibe()
+        end,
+        desc = '99 Vibe',
+      },
+      {
+        '<leader>9v',
+        function()
+          require('99').visual()
+        end,
+        mode = 'v',
+        desc = '99 Rewrite Selection',
+      },
+    },
+    config = function()
+      local ninety_nine = require('99')
+      local cwd = vim.uv.cwd()
+      local basename = vim.fs.basename(cwd)
+
+      ninety_nine.setup({
+        provider = ninety_nine.Providers.OpenCodeProvider,
+        model = 'openai/gpt-5.4',
+        completion = {
+          source = 'native',
+        },
+        logger = {
+          level = ninety_nine.DEBUG,
+          path = '/tmp/' .. basename .. '.99.debug',
+          print_on_error = true,
+        },
+        md_files = { 'AGENT.md', 'AGENTS.md' },
+        tmp_dir = './tmp',
+      })
+    end,
+  },
+  {
     "jameswolensky/marker-groups.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim", -- Required

@@ -1,6 +1,12 @@
 return {
-  -- Conjure!
-  'Olical/conjure',
+  {
+    -- Conjure!
+    'Olical/conjure',
+    ft = { 'clojure', 'fennel' },
+    init = function()
+      vim.g['conjure#mapping#doc_word'] = false
+    end,
+  },
 
   -- Structural editing, optional
   'guns/vim-sexp',
