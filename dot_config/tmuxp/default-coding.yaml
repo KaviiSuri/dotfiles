@@ -1,16 +1,17 @@
 session_name: default-coding
 start_directory: ~/
+shell_command_before: |
+  tmux split-window -h
+  tmux split-window -v -t 1
+  tmux select-layout "60,40,0,0"
+  tmux kill-pane -t 3 2>/dev/null || true
+  tmux select-pane -t 0
 windows:
   - window_name: main
     layout: main-vertical
     panes:
-      - shell_command: [bash]
-      - shell_command: [bash]
-      - shell_command: [bash]
+      - shell_command: [zsh]
+      - shell_command: [zsh]
+      - shell_command: [zsh]
     shell_command_after: |
-      tmux split-window -h -t 0
-      tmux split-window -v -t 1
-      tmux select-layout -t 0 "60,40,0,0"
-      tmux kill-pane -t 3 2>/dev/null || true
-      tmux select-pane -t 0
       # Default coding layout: 60/40 left/right, right side stacked 50/50

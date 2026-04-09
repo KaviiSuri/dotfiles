@@ -3,6 +3,7 @@ background-opacity = 0.8
 background-blur = 10
 window-decoration = none
 font-size = 16
+font-family = FiraCodeNerdFontMono
 
 # tmux is the control plane; Ghostty should stay out of split navigation.
 shell-integration = detect
