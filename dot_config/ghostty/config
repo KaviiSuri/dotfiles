@@ -1,17 +1,16 @@
 theme = dark:TokyoNight Night,light:TokyoNight Day
 background-opacity = 0.8
-background-blur = 20
+background-blur = 10
 window-decoration = none
+font-size = 16
 
-# Split keybindings (tmux-style with ctrl+space prefix)
-keybind = ctrl+space>backslash=new_split:right
-keybind = ctrl+space>minus=new_split:down
-
-# Navigate splits (tmux-style with ctrl+space prefix + hjkl)
-keybind = ctrl+space>h=goto_split:left
-keybind = ctrl+space>j=goto_split:down
-keybind = ctrl+space>k=goto_split:up
-keybind = ctrl+space>l=goto_split:right
-
-# Close split
-keybind = ctrl+space>x=close_surface
+# tmux is the control plane; Ghostty should stay out of split navigation.
+shell-integration = detect
+shell-integration-features = cursor,sudo,ssh-terminfo,ssh-env
+clipboard-read = ask
+clipboard-write = allow
+mouse-shift-capture = never
+cursor-click-to-move = true
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = notify
+background-opacity-cells = true

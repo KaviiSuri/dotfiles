@@ -57,8 +57,9 @@ brew "wget"                                 # Web content downloader
 # brew "zlib"                                 # Lossless data-compression library
 # brew "eugenmayer/dockersync/unox"           # Docker sync daemon 
 # brew "heroku/brew/heroku"                   # Heroku CLI
+brew "tmux"
 brew "lazygit"                              # Lazygit GIT GUI
-brew "openssl@1.1"                          # Open SSL 
+brew "openssl@3"                          # Open SSL 
 # brew "go"                                   # GO
 brew "neovim"
 brew "starship"
@@ -71,5 +72,6 @@ cask "font-fira-code-nerd-font"             # Fira Code Nerd Font
 cask "font-hack-nerd-font"                  # Hack Mono Nerd Font
 # cask "powershell"                           # Cross-platform shell
 # cask "alacritty"                            # Terminal Emulator
+cask "ghostty"
 cask "wezterm"
 cask "karabiner-elements"

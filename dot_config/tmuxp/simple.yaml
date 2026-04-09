@@ -1,0 +1,7 @@
+session_name: simple
+start_directory: ~/
+windows:
+  - window_name: main
+    layout: tiled
+    panes:
+      - shell_command: [bash]
