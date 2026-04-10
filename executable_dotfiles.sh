@@ -86,6 +86,34 @@ setup_applications() {
     fi
 }
 
+setup_patched_tools() {
+    printf -- "\n%sSetting up patched tools:%s\n\n" "$BOLD" "$RESET"
+
+    command_exists git || {
+        error "git is not installed"
+        exit 1
+    }
+
+    command_exists cargo || {
+        error "cargo is not installed"
+        exit 1
+    }
+
+    ILMARI_PARENT="$HOME/code/KaviiSuri"
+    ILMARI_REPO="$ILMARI_PARENT/ilmari"
+
+    printf -- "%sInstalling/updating patched Ilmari...%s\n" "$BLUE" "$RESET"
+    mkdir -p "$ILMARI_PARENT"
+
+    if [ ! -d "$ILMARI_REPO/.git" ]; then
+        git clone git@github.com:KaviiSuri/ilmari.git "$ILMARI_REPO"
+    else
+        git -C "$ILMARI_REPO" pull --ff-only
+    fi
+
+    cargo install --path "$ILMARI_REPO" --force
+}
+
 # shellcheck source=/dev/null
 setup_devtools() {
     printf -- "\n%sSetting up development tools:%s\n\n" "$BOLD" "$RESET"
@@ -145,6 +173,7 @@ main() {
     setup_applications
     setup_devtools
     finalize_dotfiles
+    setup_patched_tools
 
     printf -- "\n%sDone.%s\n\n" "$GREEN" "$RESET"
 
