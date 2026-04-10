@@ -1,0 +1,18 @@
+{
+  "sound": true,
+  "notification": true,
+  "bell": false,
+  "timeout": 5,
+  "showProjectName": true,
+  "showSessionTitle": true,
+  "showIcon": true,
+  "suppressWhenFocused": true,
+  "enableOnDesktop": false,
+  "notificationSystem": "ghostty",
+  "messages": {
+    "permission": "Needs permission: {sessionTitle}",
+    "complete": "Finished: {sessionTitle}",
+    "error": "Error: {sessionTitle}",
+    "question": "Question: {sessionTitle}"
+  }
+}
