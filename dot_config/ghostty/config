@@ -6,6 +6,7 @@ font-size = 16
 font-family = FiraCodeNerdFontMono
 
 # tmux is the control plane; Ghostty should stay out of split navigation.
+macos-option-as-alt = left
 shell-integration = detect
 shell-integration-features = cursor,sudo,ssh-terminfo,ssh-env
 clipboard-read = ask
