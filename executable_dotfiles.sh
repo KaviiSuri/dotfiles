@@ -86,6 +86,36 @@ setup_applications() {
     fi
 }
 
+setup_tmux_plugins() {
+    printf -- "\n%sSetting up tmux plugins:%s\n\n" "$BOLD" "$RESET"
+
+    command_exists git || {
+        error "git is not installed"
+        exit 1
+    }
+
+    TPM_PARENT="$HOME/.tmux/plugins"
+    TPM_REPO="$TPM_PARENT/tpm"
+
+    mkdir -p "$TPM_PARENT"
+
+    if [ ! -d "$TPM_REPO/.git" ]; then
+        printf -- "%sCloning TPM...%s\n" "$BLUE" "$RESET"
+        git clone https://github.com/tmux-plugins/tpm "$TPM_REPO"
+    else
+        printf -- "%sUpdating TPM...%s\n" "$BLUE" "$RESET"
+        git -C "$TPM_REPO" pull --ff-only
+    fi
+
+    if command_exists tmux; then
+        printf -- "%sInstalling tmux plugins with TPM...%s\n" "$BLUE" "$RESET"
+        if tmux ls >/dev/null 2>&1; then
+            tmux source-file "$HOME/.config/tmux/tmux.conf" || true
+        fi
+        "$TPM_REPO/bin/install_plugins" || true
+    fi
+}
+
 setup_patched_tools() {
     printf -- "\n%sSetting up patched tools:%s\n\n" "$BOLD" "$RESET"
 
@@ -173,6 +203,7 @@ main() {
     setup_applications
     setup_devtools
     finalize_dotfiles
+    setup_tmux_plugins
     setup_patched_tools
 
     printf -- "\n%sDone.%s\n\n" "$GREEN" "$RESET"
