@@ -86,6 +86,51 @@ setup_applications() {
     fi
 }
 
+setup_ai_tools() {
+    printf -- "\n%sSetting up AI tools:%s\n\n" "$BOLD" "$RESET"
+
+    if command_exists corepack; then
+        corepack enable
+    fi
+
+    command_exists pnpm || {
+        error "pnpm is not installed"
+        exit 1
+    }
+
+    printf -- "%sInstalling/updating Pi and Pi Agent Browser...%s\n" "$BLUE" "$RESET"
+    pnpm add -g @mariozechner/pi-coding-agent pi-agent-browser-native
+
+    command_exists pi || {
+        error "pi is not installed"
+        exit 1
+    }
+
+    command_exists gh || {
+        error "gh is not installed"
+        exit 1
+    }
+
+    printf -- "%sInstalling/updating Pi packages...%s\n" "$BLUE" "$RESET"
+    pi install npm:pi-claude-cli
+    pi install npm:pi-worktrunk
+    pi install npm:@carter-mcalister/pi-worktrunk
+    pi install npm:pi-rewind-hook
+    pi install npm:pi-agent-browser-native
+    pi install npm:pi-subagents
+
+    printf -- "%sInstalling/updating Claude Code Proxy...%s\n" "$BLUE" "$RESET"
+    if [ ! -d "$HOME/claude-code-proxy" ]; then
+        gh repo clone KaviiSuri/claude-code-proxy "$HOME/claude-code-proxy"
+    fi
+    (
+        cd "$HOME/claude-code-proxy"
+        npm install
+        npm run build
+        npm link
+    )
+}
+
 setup_tmux_plugins() {
     printf -- "\n%sSetting up tmux plugins:%s\n\n" "$BOLD" "$RESET"
 
@@ -202,6 +247,7 @@ main() {
     setup_prompts
     setup_applications
     setup_devtools
+    setup_ai_tools
     finalize_dotfiles
     setup_tmux_plugins
     setup_patched_tools
