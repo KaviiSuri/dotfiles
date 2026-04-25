@@ -1,0 +1,25 @@
+{
+  "imports": [
+    "cursor",
+    "claude-code",
+    "claude-desktop"
+  ],
+  "mcpServers": {
+    "react-grab-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@react-grab/mcp",
+        "--stdio"
+      ],
+      "directTools": true
+    },
+    "chrome_devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ],
+      "directTools": true
+    }
+  }
+}
