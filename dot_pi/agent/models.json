@@ -1,0 +1,35 @@
+{
+  "providers": {
+    "cc-proxy": {
+      "baseUrl": "http://127.0.0.1:3456",
+      "api": "anthropic-messages",
+      "apiKey": "x",
+      "models": [
+        {
+          "id": "claude-sonnet-4-6",
+          "name": "Claude Sonnet 4.6 (Max)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 200000,
+          "maxTokens": 16384
+        },
+        {
+          "id": "claude-opus-4-6",
+          "name": "Claude Opus 4.6 (Max)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 1000000,
+          "maxTokens": 16384
+        },
+        {
+          "id": "claude-haiku-4-5",
+          "name": "Claude Haiku 4.5 (Max)",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 200000,
+          "maxTokens": 16384
+        }
+      ]
+    }
+  }
+}
