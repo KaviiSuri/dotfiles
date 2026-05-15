@@ -20,6 +20,12 @@
         "chrome-devtools-mcp@latest"
       ],
       "directTools": true
+    },
+    "duckduckgo": {
+      "command": "uvx",
+      "args": [
+        "duckduckgo-mcp-server"
+      ]
     }
   }
 }
