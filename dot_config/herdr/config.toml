@@ -1,0 +1,31 @@
+onboarding = false
+
+[ui.toast]
+delivery = "herdr"
+
+[ui]
+show_agent_labels_on_pane_borders = false
+agent_panel_scope = "all"
+
+[theme]
+name = "tokyo-night"
+
+[keys]
+prefix = "ctrl+a"
+new_tab = "prefix+c"
+split_vertical = "prefix+backslash"
+split_horizontal = "prefix+minus"
+zoom = "prefix+z"
+reload_config = "prefix+R"
+open_notification_target = "prefix+o"
+previous_workspace = "prefix+p"
+next_workspace = "prefix+n"
+previous_tab = "prefix+comma"
+next_tab = "prefix+."
+previous_agent = "prefix+["
+next_agent = "prefix+]"
+
+[keys.indexed]
+tabs = "ctrl"
+workspaces = "ctrl+shift"
+agents = "alt"
