@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "react-grab-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@react-grab/mcp",
+        "--stdio"
+      ],
+      "directTools": true
+    },
+    "chrome_devtools": {
+      "command": "npx",
+      "args": [
+        "chrome-devtools-mcp@latest"
+      ],
+      "directTools": true
+    },
+    "duckduckgo": {
+      "command": "uvx",
+      "args": [
+        "duckduckgo-mcp-server"
+      ]
+    },
+    "airtable": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "airtable-mcp-server"
+      ],
+      "env": {
+        "AIRTABLE_API_KEY": "{{ env "AIRTABLE_API_KEY" }}"
+      },
+      "directTools": true
+    }
+  }
+}

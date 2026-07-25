@@ -1,0 +1,141 @@
+#!/usr/bin/env bun
+// wtab — create or refresh a worktree + open a tmux window with the 3-pane template.
+//
+// Usage:
+//   wtab <branch>           # full branch name, e.g. kavii/foo-bar
+//   wtab <branch> --base X  # base branch (default: main)
+//
+// Behavior:
+//   - If the branch already has a worktree → fetch origin <base> and hard-reset to it.
+//   - Otherwise → `wt switch --create <branch> --base <base>`.
+//   - Then open a new tmux window in the CURRENT session named after the
+//     branch's basename (part after the last `/`), with the 3-pane layout:
+//       pane 1: full-height left
+//       pane 2: top-right
+//       pane 3: bottom-right
+//   - All panes start in the worktree directory.
+
+import { $ } from "bun";
+
+$.throws(true);
+
+const args = process.argv.slice(2);
+if (args.length === 0 || args.includes("-h") || args.includes("--help")) {
+  console.log(`wtab — worktree + tmux window helper
+
+USAGE
+  wtab <branch> [--base <base-branch>]
+  wtab -h | --help
+
+ARGUMENTS
+  <branch>              Full branch name (e.g. kavii/foo-bar). If the branch
+                        already has a worktree, it is refreshed; otherwise a
+                        new worktree is created off <base>.
+
+OPTIONS
+  --base <base-branch>  Base branch to create from / refresh against.
+                        Default: main
+  -h, --help            Show this help and exit.
+
+BEHAVIOR
+  1. Resolves worktrees via \`wt list --format json\`.
+     - If a worktree exists for <branch>:
+         git fetch origin <base>
+         git reset --hard origin/<base>
+     - Else:
+         wt switch --create <branch> --base <base>
+  2. Opens a new tmux window in the CURRENT session named after the part
+     of <branch> after the last "/" (e.g. "kavii/foo-bar" → "foo-bar").
+  3. Applies the 3-pane template:
+         pane 1: full-height left  (active)
+         pane 2: top-right
+         pane 3: bottom-right
+     All panes start in the worktree directory.
+  4. If a window with that name already exists, it is selected instead of
+     creating a duplicate.
+
+REQUIREMENTS
+  Must be run inside a tmux session. \`wt\` and \`bun\` must be on PATH.
+
+EXAMPLES
+  wtab kavii/render-take-tracer
+  wtab kavii/foo --base dev
+`);
+  process.exit(args.length === 0 ? 1 : 0);
+}
+
+const branch = args[0]!;
+let base = "main";
+for (let i = 1; i < args.length; i++) {
+  if (args[i] === "--base" && args[i + 1]) {
+    base = args[i + 1]!;
+    i++;
+  }
+}
+
+if (!process.env.TMUX) {
+  console.error("error: not inside a tmux session — `wtab` opens a tmux window in the current session.");
+  process.exit(1);
+}
+
+const session = (await $`tmux display-message -p '#S'`.text()).trim();
+const windowName = branch.includes("/") ? branch.split("/").pop()! : branch;
+
+// Find an existing worktree for this branch, if any.
+const wtJson = await $`wt list --format json`.text();
+type WtRow = { branch?: string; path?: string };
+let rows: WtRow[] = [];
+try {
+  const parsed = JSON.parse(wtJson);
+  rows = Array.isArray(parsed) ? parsed : (parsed.worktrees ?? []);
+} catch {
+  rows = [];
+}
+const existing = rows.find((r) => r.branch === branch || r.branch === `refs/heads/${branch}`);
+
+let worktreePath: string;
+
+if (existing?.path) {
+  worktreePath = existing.path;
+  console.log(`◎ refreshing existing worktree at ${worktreePath} from origin/${base}`);
+  await $`git -C ${worktreePath} fetch origin ${base}`.quiet();
+  await $`git -C ${worktreePath} reset --hard origin/${base}`;
+} else {
+  console.log(`◎ creating worktree for ${branch} from ${base}`);
+  await $`wt switch --create ${branch} --base ${base}`;
+  // Re-query to find the new path.
+  const after = await $`wt list --format json`.text();
+  let afterRows: WtRow[] = [];
+  try {
+    const p = JSON.parse(after);
+    afterRows = Array.isArray(p) ? p : (p.worktrees ?? []);
+  } catch {
+    afterRows = [];
+  }
+  const created = afterRows.find((r) => r.branch === branch || r.branch === `refs/heads/${branch}`);
+  if (!created?.path) {
+    console.error("error: could not resolve worktree path after creation.");
+    process.exit(1);
+  }
+  worktreePath = created.path;
+}
+
+// Open the tmux window with the 3-pane template.
+// If a window with this name already exists in the session, just select it.
+const existingWindows = (await $`tmux list-windows -t ${session} -F '#W'`.text())
+  .split("\n")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+if (existingWindows.includes(windowName)) {
+  console.log(`◎ window "${windowName}" already exists — selecting it`);
+  await $`tmux select-window -t ${`${session}:${windowName}`}`;
+  process.exit(0);
+}
+
+await $`tmux new-window -t ${`${session}:`} -n ${windowName} -c ${worktreePath}`;
+await $`tmux split-window -h -t ${`${session}:${windowName}`} -c ${worktreePath}`;
+await $`tmux split-window -v -t ${`${session}:${windowName}`} -c ${worktreePath}`;
+await $`tmux select-pane -t ${`${session}:${windowName}.1`}`;
+
+console.log(`✓ ${windowName} → ${worktreePath}`);

@@ -1,0 +1,71 @@
+#!/usr/bin/env bun
+// cleanup-delegation-tab - Close a delegation tab and optionally remove the worktree
+//
+// Usage:
+//   cleanup-delegation-tab <slug> [--workspace <id>] [--remove-worktree] [--force]
+//
+// Closes the herdr tab with the exact label <slug>.
+// With --remove-worktree, also removes the git worktree for branch <slug>.
+// With --force, forces worktree removal even with uncommitted changes.
+
+import { $ } from "bun";
+
+$.throws(true);
+
+const args = process.argv.slice(2);
+let slug = "";
+let workspace = "";
+let removeWorktree = false;
+let force = false;
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--workspace") { workspace = args[++i]; }
+  else if (args[i] === "--remove-worktree") { removeWorktree = true; }
+  else if (args[i] === "--force") { force = true; }
+  else if (args[i] === "-h" || args[i] === "--help") {
+    console.log(`Usage: cleanup-delegation-tab <slug> [--workspace <id>] [--remove-worktree] [--force]
+
+Closes the herdr tab with the exact label <slug>.
+With --remove-worktree, also removes the git worktree for branch <slug>.
+With --force, forces worktree removal even with uncommitted changes.`);
+    process.exit(0);
+  } else { slug = args[i]; }
+}
+
+if (!slug) {
+  console.error("error: slug is required");
+  process.exit(1);
+}
+
+// Resolve current workspace when not provided
+if (!workspace) {
+  const paneInfo = await $`herdr pane get ${process.env.HERDR_PANE_ID}`.json();
+  workspace = paneInfo.result.pane.workspace_id;
+}
+
+// Find tab by exact label match
+const tabList = await $`herdr tab list --workspace ${workspace}`.json();
+const match = tabList.result.tabs.find((t: any) => t.label === slug);
+
+if (!match) {
+  console.log(`no tab found with label '${slug}'`);
+  process.exit(0);
+}
+
+// Close the tab
+await $`herdr tab close ${match.tab_id}`;
+
+if (removeWorktree) {
+  const forceFlag = force ? "--force" : "";
+  try {
+    if (force) {
+      await $`wt remove --force ${slug}`.quiet();
+    } else {
+      await $`wt remove ${slug}`.quiet();
+    }
+  } catch {
+    console.error(`note: could not remove worktree for '${slug}' (try --force if there are uncommitted changes)`);
+  }
+}
+
+console.log(`closed tab '${slug}'`);

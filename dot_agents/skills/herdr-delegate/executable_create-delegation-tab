@@ -1,0 +1,113 @@
+#!/usr/bin/env bun
+// create-delegation-tab - Create or reuse a herdr tab with 3-pane layout for delegation
+//
+// Usage:
+//   create-delegation-tab <slug> [--workspace <id>] [--cwd <path>]
+//
+// Creates a herdr tab with label=<slug> and a 3-pane layout:
+//   left:         scratch / human pane (root pane, keeps focus)
+//   top-right:    agent pane
+//   bottom-right: scratch
+//
+// If a tab with the exact label already exists, reuses it.
+// Outputs JSON: {tab_id, agent_pane, top_right_pane, bottom_right_pane, reused}
+
+import { $ } from "bun";
+
+$.throws(true);
+
+const args = process.argv.slice(2);
+let slug = "";
+let workspace = "";
+let cwd = "";
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--workspace") { workspace = args[++i]; }
+  else if (args[i] === "--cwd") { cwd = args[++i]; }
+  else if (args[i] === "-h" || args[i] === "--help") {
+    console.log(`Usage: create-delegation-tab <slug> [--workspace <id>] [--cwd <path>]
+
+Creates or reuses a herdr tab with label=<slug> and a 3-pane layout.
+Agent pane is the top-right pane. Left/root stays as scratch or human context.
+If a tab with the exact label already exists, reuses it.
+
+Outputs JSON: {tab_id, agent_pane, top_right_pane, bottom_right_pane, reused}`);
+    process.exit(0);
+  } else { slug = args[i]; }
+}
+
+if (!slug) {
+  console.error("error: slug is required");
+  process.exit(1);
+}
+
+// Resolve current workspace when not provided
+if (!workspace) {
+  const paneInfo = await $`herdr pane get ${process.env.HERDR_PANE_ID}`.json();
+  workspace = paneInfo.result.pane.workspace_id;
+}
+
+const paneSortKey = (paneId: string) => {
+  const match = paneId.match(/-(\d+)$/);
+  return match ? Number.parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
+};
+
+// Check for existing tab with exact label match
+const tabList = await $`herdr tab list --workspace ${workspace}`.json();
+const existing = tabList.result.tabs.find((t: any) => t.label === slug);
+
+if (existing) {
+  const panes = await $`herdr pane list --workspace ${workspace}`.json();
+  const tabPanes = panes.result.panes
+    .filter((p: any) => p.tab_id === existing.tab_id)
+    .sort((a: any, b: any) => paneSortKey(a.pane_id) - paneSortKey(b.pane_id));
+
+  const topRight = tabPanes[1] ?? null;
+  const bottomRight = tabPanes[2] ?? null;
+  const agentPane = topRight ?? tabPanes[0] ?? null;
+
+  console.log(JSON.stringify({
+    tab_id: existing.tab_id,
+    agent_pane: agentPane?.pane_id ?? null,
+    top_right_pane: topRight?.pane_id ?? null,
+    bottom_right_pane: bottomRight?.pane_id ?? null,
+    reused: true,
+  }));
+  process.exit(0);
+}
+
+// Create new tab
+const createArgs = ["tab", "create", "--workspace", workspace, "--label", slug, "--no-focus"];
+if (cwd) createArgs.push("--cwd", cwd);
+const createResult = await $`herdr ${createArgs}`.json();
+
+const tabId = createResult.result.tab.tab_id;
+let rootPane = createResult.result.root_pane?.pane_id;
+
+// Fallback: find root pane from pane list
+if (!rootPane) {
+  const panes = await $`herdr pane list --workspace ${workspace}`.json();
+  const tabPanes = panes.result.panes.filter((p: any) => p.tab_id === tabId);
+  rootPane = tabPanes[0]?.pane_id;
+}
+
+if (!rootPane) {
+  console.error("error: could not find root pane for tab", tabId);
+  process.exit(1);
+}
+
+// Split right from root pane (creates right column)
+const split1 = await $`herdr pane split ${rootPane} --direction right --no-focus`.json();
+const topRight = split1.result.pane.pane_id;
+
+// Split down from right pane (creates bottom-right)
+const split2 = await $`herdr pane split ${topRight} --direction down --no-focus`.json();
+const bottomRight = split2.result.pane.pane_id;
+
+console.log(JSON.stringify({
+  tab_id: tabId,
+  agent_pane: topRight,
+  top_right_pane: topRight,
+  bottom_right_pane: bottomRight,
+  reused: false,
+}));

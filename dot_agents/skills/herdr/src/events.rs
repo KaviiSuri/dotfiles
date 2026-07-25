@@ -1,0 +1,55 @@
+//! Internal app events delivered via channel.
+//!
+//! Background tasks (PTY child watchers, future hook listeners, etc.) send
+//! events to the main loop through this channel. No polling needed.
+
+use crate::detect::{Agent, AgentState};
+use crate::layout::PaneId;
+use crate::workspace::WorkspaceGitStatus;
+
+/// An event from a background task to the main loop.
+#[derive(Debug)]
+pub enum AppEvent {
+    /// A pane's child process exited.
+    PaneDied { pane_id: PaneId },
+    /// Fallback detector state changed in a pane.
+    StateChanged {
+        pane_id: PaneId,
+        agent: Option<Agent>,
+        state: AgentState,
+    },
+    /// Hook-authoritative agent state was reported for a pane.
+    HookStateReported {
+        pane_id: PaneId,
+        source: String,
+        agent_label: String,
+        state: AgentState,
+        message: Option<String>,
+        custom_status: Option<String>,
+        seq: Option<u64>,
+    },
+    /// Hook authority was explicitly cleared for a pane.
+    HookAuthorityCleared {
+        pane_id: PaneId,
+        source: Option<String>,
+        seq: Option<u64>,
+    },
+    /// The current detected agent gracefully released this pane back to the shell.
+    HookAgentReleased {
+        pane_id: PaneId,
+        source: String,
+        agent_label: String,
+        known_agent: Option<Agent>,
+        seq: Option<u64>,
+    },
+    /// A new version is available through the active installation manager.
+    UpdateReady {
+        version: String,
+        install_command: String,
+    },
+    /// A pane child emitted a valid OSC 52 clipboard write. The main loop
+    /// re-emits it through herdr's own clipboard writer.
+    ClipboardWrite { content: Vec<u8> },
+    /// Background git status refresh completed for workspaces.
+    GitStatusRefreshed { results: Vec<WorkspaceGitStatus> },
+}

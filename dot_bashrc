@@ -324,8 +324,7 @@ if command -v pipenv > /dev/null; then
     eval "$(pipenv --completion)"
 fi
 
-# Provide Travis CI completions.
-[ -f "$HOME"/.travis/travis.sh ] && \. "$HOME"/.travis/travis.sh
+
 
 # Register Acquia Dev Desktop
 if [ -d "/Applications/DevDesktop" ]; then
