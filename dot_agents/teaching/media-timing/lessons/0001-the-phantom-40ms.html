@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 01 — The phantom 40ms</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+
+<div class="nav">
+  <a href="../MISSION.md">Mission</a>
+  <a href="../reference/probing-timestamps.html">Reference: probing timestamps</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+<p class="eyebrow">Lesson 01 · Media timing</p>
+<h1>The phantom 40&nbsp;ms</h1>
+<p class="subtitle">Why one shot clip carries two clocks, where the extra frame comes from,
+and how to prove it in four commands. Built from the real <code>fdc1fa99</code> / <code>dedc4399</code> bug.</p>
+
+<h2>The one idea</h2>
+
+<p>A video file answers two different questions, and they can disagree:</p>
+
+<ul>
+  <li><strong>“Give me frame 100.”</strong> &mdash; counting. Ignores time entirely.</li>
+  <li><strong>“Give me what’s on screen at 4.028s.”</strong> &mdash; timestamps. Ignores index entirely.</li>
+</ul>
+
+<p>Our renderer asks the first question (<code>trim=start_frame</code>). The browser asks the
+second (<code>currentTime</code>). When the file’s timestamps don’t line up with its frame
+indices, the same clip gives two different answers — and a frame appears in a render that the
+editor never showed.</p>
+
+<h2>Step 1 — Frames are instants on a grid</h2>
+
+<p>At 25&nbsp;fps a frame exists only at exact multiples of 40&nbsp;ms. Frame <em>N</em> has
+<code>pts = N × 0.040</code>. There is nothing in between.</p>
+
+<div class="grid-fig">
+  <div class="track">
+    <div class="cell">1288<span class="t">51.520</span></div>
+    <div class="cell">1289<span class="t">51.560</span></div>
+    <div class="cell hit">1290<span class="t">51.600</span></div>
+    <div class="cell">1291<span class="t">51.640</span></div>
+    <div class="cell">1292<span class="t">51.680</span></div>
+  </div>
+  <p class="caption">Our shot starts at <strong>51.580</strong> — which is not on this grid.
+  It falls between 1289 and 1290.</p>
+</div>
+
+<p>That is the root of nearly every timing bug in this pipeline: shot boundaries come from a
+10&nbsp;ms dialogue grid, frames live on a 40&nbsp;ms grid. <code>51580 × 25 / 1000 =
+1289.5</code> — exactly half-way.</p>
+
+<h2>Step 2 — We pick a frame by rounding</h2>
+
+<p><code>msToFrame(51580, 25) = round(1289.5) = 1290</code>. So shot frame 0 <em>is</em> source
+frame 1290, at 51.600. Bboxes are rebased with the same function, so the whole data model
+agrees: <span class="mono">clip index k = source frame 1290 + k</span>.</p>
+
+<h2>Step 3 — We ask ffmpeg for it half a frame early</h2>
+
+<p>We could seek to 51.600, the frame’s own timestamp. That’s fragile: ffmpeg keeps frames
+with <code>pts &gt;= target</code>, so a hair of floating-point either way decides whether
+frame 1290 survives. So the planner aims at <strong>51.580</strong> — half a frame early,
+20&nbsp;ms of margin on both sides. Frame 1290 is now unambiguously first.</p>
+
+<div class="aside">
+The docs back the first half of this and are silent on the second.
+<strong>“<code>-ss</code> … as an output option: decodes but discards input until the
+timestamps reach position.”</strong> That tells you <em>which frames survive</em>. It says
+nothing about <em>what timestamp they get</em> — and that silence is the whole lesson.
+</div>
+
+<h2>Step 4 — Where 40 ms is born</h2>
+
+<p>ffmpeg now builds the clip’s own timeline starting at zero, and it has a leftover:</p>
+
+<pre><code>you asked for:       51.580
+first frame kept:    51.600
+leftover gap:         0.020   ← the clip really starts 20 ms later than requested</code></pre>
+
+<p>It records that gap in the file — <strong>rounded to a whole frame</strong>:</p>
+
+<pre><code>round(0.020 / 0.040) = round(0.5) = 1 frame  →  declares 0.040</code></pre>
+
+<p class="measured"><span class="label">Measured, not documented</span>
+The real gap is <strong>20&nbsp;ms</strong>. The file claims <strong>40&nbsp;ms</strong>.
+That doubling is the entire bug. The rule
+<code>declared = round(residual / frameDur) × frameDur</code> was derived from 9 measurements
+on ffmpeg&nbsp;8.1 — it is <em>not</em> in the docs.</p>
+
+<p>The clip now says: <em>“my timeline starts at 0, my first frame appears 0.040 in.”</em>
+So frame index <em>k</em> is presented at <code>(k+1) × 0.040</code>.</p>
+
+<p>And because the planner <em>always</em> aims exactly half a frame early, the residual is
+<em>always</em> exactly half a frame — always sitting on the rounding boundary, always
+rounding up. Every clip, every frame rate:</p>
+
+<table>
+  <tr><th>rate</th><th class="num">frame dur</th><th class="num">declared (old)</th><th class="num">declared (fixed)</th></tr>
+  <tr><td>25</td><td class="num">0.040000</td><td class="num">0.040000</td><td class="num">0.000000</td></tr>
+  <tr><td>30</td><td class="num">0.033333</td><td class="num">0.033008</td><td class="num">0.000000</td></tr>
+  <tr><td>23.976</td><td class="num">0.041708</td><td class="num">0.041000</td><td class="num">0.000000</td></tr>
+</table>
+
+<h2>Step 5 — Two clocks, one file</h2>
+
+<p>The take ends at 55608&nbsp;ms. Shot-relative: <code>55608 − 51580 = 4.028s</code>.</p>
+
+<table>
+  <tr><th>reader</th><th>how it selects</th><th>lands on</th></tr>
+  <tr><td>browser</td><td>frame with presentation time ≤ 4.028 → pts 4.00 → index <strong>99</strong></td><td>source 1389 — the woman</td></tr>
+  <tr><td>renderer</td><td><code>trim=start_frame</code>, indices 79..100 → index <strong>100</strong></td><td>source 1390 — the man</td></tr>
+</table>
+
+<p>Why 20-vs-40 flips a frame: the editor assumes clip <code>t=0</code> ↔ 51.580. With a
+declared 40&nbsp;ms lead-in the browser believes frame 0 sits at 51.620, but it really sits at
+51.600 — so <strong>every frame is reported 20&nbsp;ms late</strong>. Twenty milliseconds is
+half a frame, so a timestamp near a boundary tips backwards.</p>
+
+<p>Which one is right? The source frame covering 55.608 is 1390 — the man. The renderer
+matches the source. The browser was faithfully rendering an inaccurate claim.</p>
+
+<h2>Prove it yourself</h2>
+
+<p>Four commands, on any clip. Full versions in
+<a href="../reference/probing-timestamps.html">the reference sheet</a>.</p>
+
+<pre><code># 1. what does the file claim its start is?
+ffprobe -v error -select_streams v:0 -show_entries stream=start_time -of csv=p=0 clip.mp4
+
+# 2. same question, ignoring the edit list — if these differ, you have two clocks
+ffprobe -v error -ignore_editlist 1 -select_streams v:0 -show_entries stream=start_time -of csv=p=0 clip.mp4
+
+# 3. what timestamp does each frame actually carry?
+ffmpeg -i clip.mp4 -vf "select='lt(n\,3)',showinfo" -f null - 2>&1 | grep pts_time
+
+# 4. index vs time: is frame n at n×frameDur, or (n+1)×frameDur?</code></pre>
+
+<div class="quiz" data-quiz='[
+  {"q":"A shot starts at 51580 ms in a 25 fps source. Which source frame becomes clip index 0?","a":["frame 1289, at 51.560 s","frame 1290, at 51.600 s","frame 1291, at 51.640 s"],"correct":1,"why":"msToFrame rounds: round(1289.5) = 1290. The same rounding rebases the bboxes, which is why index space stays self-consistent."},
+  {"q":"ffmpeg keeps the frame at 51.600 after a seek to 51.580. What gap does the file declare?","a":["0.020 s, the true leftover","0.040 s, rounded to a frame","0.000 s, no gap recorded"],"correct":1,"why":"The residual 0.020 is exactly half of 0.040, sits on the rounding boundary, and rounds up to one whole frame. The true gap is 20 ms; the file claims 40 ms."},
+  {"q":"Which consumer is affected by a clips edit list?","a":["only the browser player","only the ffmpeg renderer","both, in equal measure"],"correct":0,"why":"The renderer selects by frame index (trim=start_frame) and ignores timestamps entirely. Only time-based readers — browsers — are misled. That insensitivity is luck, not correctness."},
+  {"q":"Why does a 20 ms misstatement change which frame is shown?","a":["because codecs round timestamps","because it exceeds half a frame","because it equals half a frame"],"correct":2,"why":"At 25 fps a frame spans 40 ms, so 20 ms is exactly half. Reporting every frame 20 ms late tips any timestamp near a boundary back into the previous frame."}
+]'></div>
+
+<h2>What this unlocks</h2>
+
+<p>You can now answer the question that decides the fix: <em>is the file wrong, or is the
+reader wrong?</em> Here the file was wrong — which is why compensating in the editor was the
+wrong instinct (it would break shot durations), and why correcting the clip was right.</p>
+
+<div class="measured unverified"><span class="label">Still unverified</span>
+Three things this lesson does not prove, and you should push on next time:
+(1) the rounding rule comes from measurement, not from <code>libavformat/movenc.c</code>;
+(2) the <em>raw</em> start time (0.08–0.12 s, visible with <code>-ignore_editlist</code>) is a
+separate encoder-delay offset that is only partly characterised;
+(3) at fractional rates the “exactly half a frame” residual isn’t an exact tie, so the
+rounding is less certain than at 25&nbsp;fps.</div>
+
+<footer>
+  <p><strong>Read next (primary source):</strong>
+  <a href="https://ffmpeg.org/ffmpeg.html">FFmpeg Documentation — main options</a>. Find the
+  <code>-ss</code> entry and read the input-option and output-option wording side by side.
+  Notice what it does not promise.</p>
+  <p><strong>Ask your teacher.</strong> Anything above that felt like a leap — especially any
+  step where I said “measured” — is worth challenging. Two earlier explanations of this exact
+  bug were confidently wrong and died to a one-line experiment. Ask me to run the experiment.</p>
+</footer>
+
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

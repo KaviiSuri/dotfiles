@@ -1,0 +1,102 @@
+/* Shared lesson stylesheet — every lesson and reference doc links this.
+   Tufte-ish: generous measure, sparse rules, colour only where it carries meaning. */
+
+:root {
+  --ink: #14140f;
+  --ink-soft: #5c5b52;
+  --rule: #d8d4c8;
+  --paper: #fffdf7;
+  --accent: #9b2c1a;      /* the one hot colour: use for the thing that matters */
+  --good: #1f6f43;
+  --bad: #9b2c1a;
+  --grid: #e8e3d6;
+  --measure: 34rem;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 17px; }
+
+body {
+  margin: 0 auto;
+  padding: 4rem 2rem 8rem;
+  max-width: 46rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: et-book, Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+.eyebrow {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.6rem;
+}
+
+h1 { font-size: 2.1rem; line-height: 1.15; font-weight: 400; margin: 0 0 0.4rem; }
+h2 {
+  font-size: 1.25rem; font-weight: 400; margin: 3rem 0 0.8rem;
+  padding-bottom: 0.3rem; border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1rem; font-weight: 600; margin: 1.8rem 0 0.4rem; }
+
+p, li { max-width: var(--measure); }
+p { margin: 0 0 1rem; }
+
+.subtitle { color: var(--ink-soft); font-style: italic; margin-bottom: 2.5rem; max-width: var(--measure); }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(155, 44, 26, 0.3); }
+a:hover { border-bottom-color: var(--accent); }
+
+code, .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.85em; }
+code { background: rgba(0, 0, 0, 0.045); padding: 0.1em 0.32em; border-radius: 3px; }
+
+pre {
+  background: #f4f1e8; border: 1px solid var(--rule); border-radius: 4px;
+  padding: 0.9rem 1.1rem; overflow-x: auto; font-size: 0.8rem; line-height: 1.55;
+}
+pre code { background: none; padding: 0; }
+
+/* Marginal aside — Tufte sidenote, collapses inline on narrow screens */
+.aside {
+  border-left: 2px solid var(--rule); padding: 0.1rem 0 0.1rem 1rem;
+  color: var(--ink-soft); font-size: 0.9rem; margin: 1.4rem 0; max-width: var(--measure);
+}
+.aside strong { color: var(--ink); }
+
+/* The one callout style: something that was measured, not assumed */
+.measured {
+  border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+  background: #fbf8f0; padding: 0.9rem 1.1rem; margin: 1.5rem 0; font-size: 0.92rem;
+}
+.measured .label {
+  font-family: ui-monospace, Menlo, monospace; font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.4rem;
+}
+
+/* Warning: an unverified claim */
+.unverified { border-left-color: var(--ink-soft); background: #f7f6f1; }
+.unverified .label { color: var(--ink-soft); }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; margin: 1.4rem 0; }
+th, td { text-align: left; padding: 0.42rem 0.7rem; border-bottom: 1px solid var(--rule); }
+th { font-weight: 600; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+td.num, th.num { font-family: ui-monospace, Menlo, monospace; text-align: right; }
+
+/* Frame-grid diagram */
+.grid-fig { margin: 2rem 0; font-family: ui-monospace, Menlo, monospace; font-size: 0.78rem; }
+.grid-fig .track { display: flex; align-items: stretch; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.grid-fig .cell { flex: 1; padding: 0.7rem 0.4rem; text-align: center; border-right: 1px solid var(--grid); background: #fbf9f2; }
+.grid-fig .cell:last-child { border-right: none; }
+.grid-fig .cell.hit { background: #f6e6df; }
+.grid-fig .cell .t { color: var(--ink-soft); font-size: 0.7rem; display: block; }
+.grid-fig .caption { color: var(--ink-soft); font-size: 0.8rem; margin-top: 0.6rem; font-family: inherit; }
+
+footer { margin-top: 5rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); color: var(--ink-soft); font-size: 0.86rem; }
+footer a { font-weight: 500; }
+
+.nav { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 2.5rem; font-size: 0.84rem; }

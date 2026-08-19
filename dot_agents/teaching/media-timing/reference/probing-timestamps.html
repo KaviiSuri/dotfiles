@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Probing timestamps</title>
+<link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+
+<div class="nav">
+  <a href="../lessons/0001-the-phantom-40ms.html">Lesson 01</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+<p class="eyebrow">Reference · print me</p>
+<h1>Probing timestamps</h1>
+<p class="subtitle">The commands that settle “which frame is really there?” — and the traps
+that make them lie. Verified on ffmpeg 8.1.</p>
+
+<h2>The four questions</h2>
+
+<table>
+  <tr><th>Question</th><th>Command</th></tr>
+  <tr><td>What does the file <em>claim</em> its start is?</td>
+      <td class="mono">ffprobe -v error -select_streams v:0 -show_entries stream=start_time -of csv=p=0 F</td></tr>
+  <tr><td>…ignoring the edit list?</td>
+      <td class="mono">ffprobe -v error -ignore_editlist 1 … (same)</td></tr>
+  <tr><td>How many frames are really there?</td>
+      <td class="mono">ffprobe -v error -count_packets -select_streams v:0 -show_entries stream=nb_read_packets -of csv=p=0 F</td></tr>
+  <tr><td>What timestamp does each frame carry?</td>
+      <td class="mono">ffmpeg -i F -vf "select='lt(n\,5)',showinfo" -f null - 2>&amp;1 | grep pts_time</td></tr>
+</table>
+
+<p><strong>Reading it:</strong> if the first two answers differ, the file has an edit list and
+you have <em>two clocks</em>. If frame <em>n</em> reports <code>(n+1) × frameDur</code> instead
+of <code>n × frameDur</code>, the declared lead-in is one frame.</p>
+
+<h2>Extracting frames you can look at</h2>
+
+<pre><code># frames 98..101 side by side, in order
+ffmpeg -y -i F -vf "select='gte(n\,98)*lt(n\,102)',scale=400:-1,tile=4x1" -frames:v 1 out.png
+
+# where does the picture actually change? (scene cuts, absolute timestamps)
+ffmpeg -copyts -ss 55 -i F -t 1.2 -vf "select='gt(scene,0.2)',showinfo" -an -f null - 2>&amp;1 | grep pts_time</code></pre>
+
+<h2>Measurement traps</h2>
+
+<div class="measured"><span class="label">Trap 1 — volumedetect with -ss</span>
+<code>-af volumedetect</code> combined with an output-side <code>-ss</code>/<code>-t</code>
+reports across frames <em>outside</em> the window. It gave −29 dB for a window that was
+actually −91 dB (digital silence). <strong>Use <code>atrim</code> and extract the window to a
+file, then measure that file.</strong></div>
+
+<div class="measured"><span class="label">Trap 2 — index vs presentation order</span>
+<code>select='between(n,…)'</code> counts frames in presentation order, which is what you
+want — but <code>showinfo</code>’s <code>n</code> resets after a <code>select</code>. Read
+<code>pts_time</code>, not the printed <code>n</code>, when you need absolute position.</div>
+
+<div class="measured"><span class="label">Trap 3 — scene detection lags by a frame</span>
+<code>select='gt(scene,…)'</code> reports the frame where the difference was <em>measured</em>,
+which can be one after the true cut. Confirm by extracting the two candidate frames as images.</div>
+
+<div class="measured"><span class="label">Trap 4 — probing over HTTP is fine</span>
+A signed URL works directly: <code>ffprobe "$SIGNED_URL"</code> reads only headers via range
+requests. No need to download a 1.4&nbsp;GB source to read its frame rate.</div>
+
+<h2>Frame arithmetic</h2>
+
+<pre><code>frameDur   = 1 / fps                     # 25fps → 0.040
+frameIndex = round(ms × fps / 1000)      # msToFrame — what the pipeline uses
+frameTime  = index × frameDur            # a frame is an INSTANT, not a span
+
+on-grid?   = (ms × fps / 1000) is an integer
+             51580 × 25/1000 = 1289.5  → off-grid, half-frame boundary</code></pre>
+
+<h2>The rule we derived</h2>
+
+<p>Output-side <code>-ss</code> keeps the first frame with <code>pts &gt;= ss</code>, then
+declares the leftover as a lead-in, rounded to a whole frame:</p>
+
+<pre><code>declared_start = round(residual / frameDur) × frameDur
+residual       = pts(first kept frame) − ss</code></pre>
+
+<table>
+  <tr><th class="num">residual</th><th class="num">predicted</th><th class="num">actual</th></tr>
+  <tr><td class="num">0.0100</td><td class="num">0.00</td><td class="num">0.000000</td></tr>
+  <tr><td class="num">0.0190</td><td class="num">0.00</td><td class="num">0.000000</td></tr>
+  <tr><td class="num">0.0200</td><td class="num">0.04</td><td class="num">0.040000</td></tr>
+  <tr><td class="num">0.0250</td><td class="num">0.04</td><td class="num">0.040000</td></tr>
+  <tr><td class="num">0.0300</td><td class="num">0.04</td><td class="num">0.040000</td></tr>
+</table>
+
+<div class="measured unverified"><span class="label">Not documented</span>
+This rule is ours, from 9 measurements on ffmpeg 8.1 at 25/30/23.976&nbsp;fps. The mov muxer’s
+edit-list behaviour is not specified in the FFmpeg docs. Cleared by experiment:
+<code>-avoid_negative_ts 0</code> changes nothing, and <code>-bf 0</code> still declares the
+lead-in — so it is neither negative timestamps nor B-frame delay.</div>
+
+<h2>Fixing it</h2>
+
+<pre><code># leaves a one-frame declared lead-in
+-ss SEEK -i F -ss OFFSET -frames:v N
+
+# declares 0.000000, same frames, same content
+-ss SEEK -i F -vf "trim=start=OFFSET,setpts=PTS-STARTPTS" -frames:v N</code></pre>
+
+<p><code>setpts=PTS-STARTPTS</code> <em>alone</em> does not work — an output-side
+<code>-ss</code> shifts timestamps after the filter graph has run.</p>
+
+<footer>
+  <p>Companion to <a href="../lessons/0001-the-phantom-40ms.html">Lesson 01 — The phantom
+  40&nbsp;ms</a>. Ask your teacher to re-run any measurement here; all of them are one command.</p>
+</footer>
+
+</body>
+</html>
