@@ -1,0 +1,38 @@
+# bb daemon control.
+#
+# launchd owns the process; mise only wraps launchctl. `bb-app start` is
+# deliberately a foreground process, so launchd supervises it directly and there
+# is no background flag to reach for.
+#
+# Lives in conf.d/ so mise can keep writing tool versions to config.toml without
+# colliding with anything chezmoi manages.
+
+[tasks."bb:restart"]
+description = "Restart the bb daemon"
+run = 'launchctl kickstart -k "gui/$(id -u)/com.kaviisuri.bb-app"'
+
+[tasks."bb:start"]
+description = "Start the bb daemon"
+run = 'launchctl kickstart "gui/$(id -u)/com.kaviisuri.bb-app"'
+
+# KeepAlive is unconditional, so launchd restarts bb within ThrottleInterval
+# after a signal. Use bb:unload to keep it down.
+[tasks."bb:stop"]
+description = "Signal the bb daemon to stop (launchd restarts it)"
+run = 'launchctl kill SIGTERM "gui/$(id -u)/com.kaviisuri.bb-app"'
+
+[tasks."bb:unload"]
+description = "Stop the bb daemon and keep it down until bb:load"
+run = 'launchctl bootout "gui/$(id -u)/com.kaviisuri.bb-app"'
+
+[tasks."bb:load"]
+description = "Load the bb daemon agent after bb:unload"
+run = 'launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.kaviisuri.bb-app.plist"'
+
+[tasks."bb:status"]
+description = "Show bb daemon state and last exit status"
+run = 'launchctl print "gui/$(id -u)/com.kaviisuri.bb-app" | grep -E "state =|runs =|last exit|pid ="'
+
+[tasks."bb:logs"]
+description = "Follow bb daemon stderr"
+run = 'tail -f "$HOME/.bb/logs/launchd.stderr.log"'

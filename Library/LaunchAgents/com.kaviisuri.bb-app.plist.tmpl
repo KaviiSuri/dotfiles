@@ -25,11 +25,11 @@
   <key>RunAtLoad</key>
   <true/>
 
+  <!-- Unconditional: bb-app start exits 0 when another instance already holds
+       the port, and SuccessfulExit=false treats that as "job done" and never
+       retries, which leaves the agent loaded but idle. -->
   <key>KeepAlive</key>
-  <dict>
-    <key>SuccessfulExit</key>
-    <false/>
-  </dict>
+  <true/>
 
   <key>ThrottleInterval</key>
   <integer>5</integer>
