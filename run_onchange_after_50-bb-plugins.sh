@@ -42,10 +42,9 @@ disable_if_present() {
   fi
 }
 
-# Personal repos. The https://github-personal/ hosts rely on the url.insteadOf
-# rewrite in .gitconfig, which routes them over the personal SSH key.
-ensure_plugin notifications 'git:https://github-personal/KaviiSuri/bb-plugin-notifications.git@main'
-ensure_plugin tasks-kv 'git:https://github-personal/KaviiSuri/bb-plugin-tasks.git@main'
+# All three are public, so plain https clones anonymously on any machine.
+ensure_plugin notifications 'git:https://github.com/KaviiSuri/bb-plugin-notifications.git@main'
+ensure_plugin tasks-kv 'git:https://github.com/KaviiSuri/bb-plugin-tasks.git@main'
 ensure_plugin worktree-setup 'git:https://github.com/KaviiSuri/bb-plugin-worktree-setup.git@main'
 
 # Community plugins, pinned to a compatible range rather than a moving branch.
