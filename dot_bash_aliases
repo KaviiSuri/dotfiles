@@ -147,6 +147,10 @@ alias ff='find . -type f -name'
 # Clears the console screen.
 alias c='clear'
 
+# Installs and updates mise-managed development tools.
+alias mget='mise-get'
+alias mup='MISE_MINIMUM_RELEASE_AGE=0 mise up'
+
 # Searches history.
 alias h='history_search' # see file `functions`
 alias hs='history_session_search' # see file `functions`

@@ -105,6 +105,11 @@
     # Enable submodule summary of commits.
     submoduleSummary = true
 
+# BB's managed git-plugin installer accepts HTTPS-shaped URLs. Rewrite the
+# private GitHub host alias to the SSH transport configured in ~/.ssh/config.
+[url "git@github-personal:"]
+    insteadOf = https://github-personal/
+
 [user]
     # Specify the email address of the author/committer.
     email = "{{ .email }}"

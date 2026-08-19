@@ -16,7 +16,6 @@ tap "homebrew/services"
 # tap "homebrew/cask-fonts"
 tap "jesseduffield/lazygit"
 
-brew "asdf"                                 # Extendable version manager
 brew "autoconf"                             # Configuration shell script maker
 brew "bash"                                 # Bourne again shell
 brew "bash-completion"                      # Autocompletions for `bash`
@@ -59,10 +58,12 @@ brew "wget"                                 # Web content downloader
 # brew "heroku/brew/heroku"                   # Heroku CLI
 brew "tmux"
 brew "lazygit"                              # Lazygit GIT GUI
+brew "mise"                                 # Development tool and environment manager
 brew "openssl@3"                          # Open SSL 
 # brew "go"                                   # GO
 brew "neovim"
 brew "starship"
+brew "tailscale"                            # Mesh VPN CLI and daemon
 brew "bitwarden-cli"
 brew "fzf"
 

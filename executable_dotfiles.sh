@@ -98,27 +98,13 @@ setup_ai_tools() {
         exit 1
     }
 
-    printf -- "%sInstalling/updating Pi and Pi Agent Browser...%s\n" "$BLUE" "$RESET"
-    pnpm add -g @mariozechner/pi-coding-agent pi-agent-browser-native
-
-    command_exists pi || {
-        error "pi is not installed"
-        exit 1
-    }
-
     command_exists gh || {
         error "gh is not installed"
         exit 1
     }
 
-    printf -- "%sInstalling/updating Pi packages...%s\n" "$BLUE" "$RESET"
-    pi install npm:pi-claude-cli
-    pi install npm:pi-worktrunk
-    pi install npm:@carter-mcalister/pi-worktrunk
-    pi install npm:pi-rewind-hook
-    pi install npm:pi-agent-browser-native
-    pi install npm:pi-subagents
-
+    # Pi itself is installed by mise. Pi packages are declared in
+    # ~/.pi/agent/settings.json and reconciled by Pi on startup.
     printf -- "%sInstalling/updating Claude Code Proxy...%s\n" "$BLUE" "$RESET"
     if [ ! -d "$HOME/claude-code-proxy" ]; then
         gh repo clone KaviiSuri/claude-code-proxy "$HOME/claude-code-proxy"
@@ -189,42 +175,16 @@ setup_patched_tools() {
     cargo install --path "$ILMARI_REPO" --force
 }
 
-# shellcheck source=/dev/null
 setup_devtools() {
     printf -- "\n%sSetting up development tools:%s\n\n" "$BOLD" "$RESET"
 
-    command_exists git || {
-        error "git is not installed"
+    command_exists mise || {
+        error "mise is not installed"
         exit 1
     }
 
-    # Install ASDF Versionn Manager
-    # https://asdf-vm.com/
-    if ! command -v brew > /dev/null; then
-        printf -- "%sInstalling/updating ASDF Extendable Version Manager...%s\n" "$BLUE" "$RESET"
-        export ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}" && (
-            ASDF_NEW=false
-            if [ ! -d "$ASDF_DIR" ]; then
-                git clone https://github.com/asdf-vm/asdf.git "$NVM_DIR"
-                ASDF_NEW=true
-            fi
-            cd "$ASDF_DIR"
-            if [ $ASDF_NEW ]; then
-                git checkout "$(git describe --abbrev=0 --tags)"
-            else
-                asdf update
-            fi
-        ) && \. "$ASDF_DIR/nvm.sh" && ([ -z "$BASH_VERSION" ] || \. "$ASDF_DIR/completions/asdf.bash")
-    fi
-
-    printf -- "%sInstalling/updating ASDF plugins...%s\n" "$BLUE" "$RESET"
-    asdf plugin add golang
-    asdf plugin add nodejs
-    # asdf plugin add python
-    asdf plugin update --all
-
-    asdf install golang latest
-    asdf install nodejs latest
+    # Tool installation is reconciled by run_onchange_after_40-mise-tools.sh
+    # during the final chezmoi apply.
 }
 
 finalize_dotfiles() {

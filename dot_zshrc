@@ -96,7 +96,6 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    asdf                    # Integrates with ASDF extendable version manager
     colored-man-pages       # Adds colors to man pages
     common-aliases          # Aliases for many commonly used commands
     cp                      # Secure `cpv` function that uses `rsync`
@@ -259,22 +258,6 @@ if [ -f '/Users/kavii-suri/google-cloud-sdk/completion.zsh.inc' ]; then . '/User
 export PATH="/opt/homebrew/opt/ffmpeg@6/bin:$PATH"
 
 
-# Enable ASDF Extendable version manager (https://asdf-vm.com).
-# This should replace all language-secific version managers.
-ASDF_DIR="${ASDF_DIR:-$HOME/.asdf}"
-if [[ ! -d $ASDF_DIR ]] && type brew &> /dev/null; then
-    ASDF_DIR="$(brew --prefix asdf)"
-fi
-[ -s "$ASDF_DIR/asdf.sh" ] && \. "$ASDF_DIR/asdf.sh"
-
-# # Provide ASDF completions (already loaded if using Homebrew).
-# if [ -s "$ASDF_DIR/completions" ]; then
-#     fpath=(${ASDF_DIR}/completions $fpath)
-#     # initialise completions with ZSH's compinit
-#     autoload -Uz compinit
-#     compinit
-# fi
-
 # BEGIN opam configuration
 # This is useful if you're using opam as it adds:
 #   - the correct directories to the PATH
@@ -287,18 +270,6 @@ fi
 export PATH="/Users/kavii-suri/.codeium/windsurf/bin:$PATH"
 
 
-# Enable Node Version Manager.
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# Provide Node completions.
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
 # bun completions
 [ -s "/Users/kavii-suri/.bun/_bun" ] && source "/Users/kavii-suri/.bun/_bun"
 
@@ -307,3 +278,8 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+# Activate mise after legacy version managers so mise owns the final tool PATH.
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate zsh)"
+fi

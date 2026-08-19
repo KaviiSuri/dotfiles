@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: mise-get <package> [command-name [binary-name]]
+
+Install a mise-managed tool globally and create a stable wrapper in
+~/.local/bin. Backend packages such as npm: and github: require an explicit
+command name.
+
+Examples:
+  mise-get codex
+  mise-get npm:bb-app bb bb
+  mise-get github:herdrdev/herdr herdr herdr
+EOF
+}
+
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ $# -lt 1 || $# -gt 3 ]]; then
+  usage >&2
+  exit 2
+fi
+
+package=$1
+if [[ $# -ge 2 ]]; then
+  command_name=$2
+elif [[ $package == *:* ]]; then
+  printf 'mise-get: command name is required for backend package %q\n' "$package" >&2
+  exit 2
+else
+  command_name=${package%%@*}
+fi
+binary_name=${3:-$command_name}
+
+if [[ ! $command_name =~ ^[A-Za-z0-9._+-]+$ ]]; then
+  printf 'mise-get: invalid command name: %q\n' "$command_name" >&2
+  exit 2
+fi
+if [[ ! $binary_name =~ ^[A-Za-z0-9._+-]+$ ]]; then
+  printf 'mise-get: invalid binary name: %q\n' "$binary_name" >&2
+  exit 2
+fi
+if ! command -v mise >/dev/null 2>&1; then
+  echo 'mise-get: mise is not installed or not on PATH' >&2
+  exit 1
+fi
+
+install_dir=${MISE_GET_BIN_DIR:-"$HOME/.local/bin"}
+target="$install_dir/$command_name"
+marker='# generated-by: mise-get'
+
+if [[ -e $target || -L $target ]]; then
+  if [[ ! -f $target ]] || ! grep -Fqx "$marker" "$target" 2>/dev/null; then
+    printf 'mise-get: refusing to overwrite unmanaged command: %s\n' "$target" >&2
+    exit 1
+  fi
+fi
+
+printf 'mise-get: installing %s\n' "$package"
+mise use --global "$package"
+
+mkdir -p "$install_dir"
+tmp=$(mktemp "$install_dir/.mise-get.XXXXXX")
+trap 'rm -f "$tmp"' EXIT
+printf -v package_q '%q' "$package"
+printf -v binary_q '%q' "$binary_name"
+cat >"$tmp" <<EOF
+#!/usr/bin/env bash
+$marker
+# package: $package
+
+set -euo pipefail
+exec mise x $package_q -- $binary_q "\$@"
+EOF
+chmod 0755 "$tmp"
+mv -f "$tmp" "$target"
+trap - EXIT
+
+printf 'mise-get: %s -> %s (%s)\n' "$command_name" "$package" "$target"
