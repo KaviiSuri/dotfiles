@@ -32,17 +32,35 @@ ensure_plugin() {
   bb plugin enable "$id" >/dev/null
 }
 
+# Installed but deliberately off. Listed rather than omitted so the intent is
+# explicit, and disabled without installing so a fresh machine does not pull
+# down plugins only to switch them off.
+disable_if_present() {
+  local id=$1
+  if jq -e --arg id "$id" '.plugins[] | select(.id == $id)' <<<"$plugins_json" >/dev/null; then
+    bb plugin disable "$id" >/dev/null
+  fi
+}
+
+# Personal repos. The https://github-personal/ hosts rely on the url.insteadOf
+# rewrite in .gitconfig, which routes them over the personal SSH key.
 ensure_plugin notifications 'git:https://github-personal/KaviiSuri/bb-plugin-notifications.git@main'
 ensure_plugin tasks-kv 'git:https://github-personal/KaviiSuri/bb-plugin-tasks.git@main'
 ensure_plugin worktree-setup 'git:https://github.com/KaviiSuri/bb-plugin-worktree-setup.git@main'
 
-for id in ask-user-question automations connect custom-instructions inline-vis secrets side-chat t3sidebar workflows; do
+# Community plugins, pinned to a compatible range rather than a moving branch.
+ensure_plugin attention 'npm:bb-plugin-attention@^0.1.0'
+ensure_plugin context-meter 'git:https://github.com/Hazihell/bb-plugin-context-meter.git@semver:^0.1.0'
+ensure_plugin web-push-notify 'git:https://github.com/MayankBansal12/bb-plugin-web-push-notify.git@semver:^0.2.0'
+
+for id in ask-user-question automations connect custom-instructions github inline-vis secrets side-chat t3sidebar workflows; do
   bb plugin enable "$id" >/dev/null
 done
 
 # The custom tasks-kv plugin replaces BB's bundled Tasks plugin.
-if jq -e '.plugins[] | select(.id == "tasks")' <<<"$plugins_json" >/dev/null; then
-  bb plugin disable tasks >/dev/null
-fi
+plugins_json=$(bb plugin list --json)
+for id in tasks provider-retry pets usage; do
+  disable_if_present "$id"
+done
 
 echo "bb plugins: desired plugin set is enabled"
