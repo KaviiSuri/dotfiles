@@ -1,19 +1,24 @@
+{{- $email := promptStringOnce . "email" "Default git author email (the identity for this machine's everyday work)" -}}
+{{- $name := promptStringOnce . "name" "Default git author name" -}}
+{{- $personalSshKey := promptStringOnce . "personalSshKey" "Private key in ~/.ssh that authenticates as the personal GitHub account" "id_ed25519_personal" -}}
 # -*-mode:conf-toml-*- vim:ft=toml
 
-# ~/.local/share/chezmoi/.chezmoi.toml.tmpl
+# ~/.config/chezmoi/chezmoi.toml
 # =============================================================================
-# Used to customize configuration when doing a `chezmoi init`.
+# Generated from .chezmoi.toml.tmpl by `chezmoi init`. Holds the values that
+# differ per machine, which is why they live in config rather than in a managed
+# dotfile. promptStringOnce only asks when a key is absent, so re-running init on
+# an already-configured machine is silent.
 #
-# This template file will trigger prompts to fill-in machine-specific
-# templateable values. The resulting file is then created at
-# `~/.config/chezmoi/chezmoi.toml`
-# See https://www.chezmoi.io/docs/how-to/
-#
-# {{- /* This file supports Go's text/template language. */}}
-
-# {{- $email := promptString "Git email address for the author/committer" }}
-# {{- $name := promptString "Git username for the author/committer" }}
+# See https://www.chezmoi.io/user-guide/setup/
 
 [data]
-    email = "{{ $email }}"
-    name = "{{ $name }}"
+    # Default identity. On a personal-only machine set this to the personal
+    # identity and everything inherits it. Where the day job is the default, the
+    # includeIf rules in .gitconfig override it for personal directories.
+    email = {{ $email | quote }}
+    name = {{ $name | quote }}
+
+    # Backs the IdentityFile of the `github-personal` SSH host. The same account
+    # is reached through a differently named key on each machine.
+    personalSshKey = {{ $personalSshKey | quote }}
