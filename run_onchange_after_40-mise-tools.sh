@@ -11,7 +11,7 @@ fi
 
 # Node provides npm for npm-backed tools. BB needs dependency lifecycle scripts,
 # so use npm rather than mise's embedded installer for this backend.
-mise use --global node@22.22.1 pnpm@10 terraform@1.13
+mise use --global node@22.22.1 pnpm@10 terraform@1.13 bun uv
 mise settings set npm.shell_out=true
 
 # All user-level development applications follow mise's rolling update policy.
@@ -39,3 +39,17 @@ mise-get 'npm:@earendil-works/pi-coding-agent[npm_args=--ignore-scripts=false]' 
 mise-get codex
 mise-get claude
 mise-get opencode
+
+# Cross-platform developer CLIs belong to mise rather than a second global
+# package manager. System-integrated software remains in Homebrew.
+mise-get gh
+mise-get deno
+mise-get kubecolor
+mise-get railway
+mise-get worktrunk wt wt
+mise-get 'pipx:tmuxp' tmuxp tmuxp
+mise-get 'npm:@bitwarden/cli' bw bw
+# Keep the last known Node 22-compatible agent-browser release until the
+# package's current Node >=24 requirement matches our pinned runtime.
+mise-get 'npm:agent-browser[npm_args=--ignore-scripts=false]@0.26.0' agent-browser agent-browser
+mise-get vercel

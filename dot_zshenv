@@ -1,0 +1,11 @@
+# ~/.zshenv
+# Keep non-interactive shells minimal. Strip paths inherited from the retired
+# ZeroBrew installation before activating user toolchains.
+path=(${path:#/opt/zerobrew/bin})
+path=(${path:#$HOME/.zerobrew/bin})
+export PATH
+unset ZEROBREW_DIR ZEROBREW_BIN ZEROBREW_ROOT ZEROBREW_PREFIX
+
+# Interactive development tools are activated by mise in ~/.zshrc; rustup
+# remains the Rust toolchain owner.
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"

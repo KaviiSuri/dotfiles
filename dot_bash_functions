@@ -110,20 +110,34 @@ alias r=repeat
 # Keeps all apps and packages up to date.
 # Syntax: `update [all]`
 function update() {
-    if command -v softwarepudate &> /dev/null; then
-        echo 'Checking for system updates...'
-        softwareupdate -l -i -a
+    if command -v softwareupdate &> /dev/null; then
+        echo 'Installing macOS system updates...'
+        softwareupdate --install --all
     fi
 
     if command -v brew &> /dev/null; then
-        echo 'Updating packages with Homebrew/Linuxbrew...'
+        echo 'Updating system packages with Homebrew/Linuxbrew...'
         brew update
         brew upgrade
-        brew cask update
         brew cleanup
     fi
 
-    if [[ "$1" == 'all' ]]; then
+    if command -v mise &> /dev/null; then
+        echo 'Updating development tools with mise...'
+        MISE_MINIMUM_RELEASE_AGE=0 mise up
+    fi
+
+    if command -v rustup &> /dev/null; then
+        echo 'Updating Rust toolchains with rustup...'
+        rustup update
+    fi
+
+    if command -v bb &> /dev/null && bb status &> /dev/null; then
+        echo 'Updating BB plugins...'
+        bb plugin update --all --yes
+    fi
+
+    if [[ "${1:-}" == 'all' ]]; then
         if command -v mas &> /dev/null; then
             echo 'Updating App Store applications...'
             mas upgrade
@@ -146,12 +160,6 @@ function update() {
             apt-get upgrade
             apt-get dist-upgrade
         fi
-    fi
-
-    if command -v npm &> /dev/null; then
-        echo 'Updating Node.js packages with npm...'
-        which npm
-        npm update -g
     fi
 
 }

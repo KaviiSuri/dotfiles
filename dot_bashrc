@@ -296,17 +296,6 @@ fi
 # Development environments
 # -----------------------------------------------------------------------------
 
-# Enable Python version management.
-if command -v pyenv > /dev/null; then
-    eval "$(pyenv init --path)"
-fi
-
-# Provide Python completions.
-if command -v pipenv > /dev/null; then
-    eval "$(pipenv --completion)"
-fi
-
-
 
 # Register Acquia Dev Desktop
 if [ -d "/Applications/DevDesktop" ]; then
@@ -363,12 +352,11 @@ PATH="$(echo "$PATH" | awk 'BEGIN{RS=":";}
 {sub(sprintf("%c$",10),"");if(A[$0]){}else{A[$0]=1;
 printf(((NR==1)?"":":")$0)}}')";
 export PATH
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 source ~/secrets.sh
-. "/Users/kaviisuri/.deno/env"
 
-# Activate mise after legacy version managers so mise owns the final tool PATH.
+# Activate mise as the final owner of development-tool PATH entries.
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate bash)"
 fi

@@ -6,21 +6,18 @@
 #
 # See https://github.com/Homebrew/homebrew-bundle
 
-tap "buo/cask-upgrade"
-tap "eugenmayer/dockersync"
-tap "heroku/brew"
-tap "homebrew/bundle"
-# tap "homebrew/cask"
-# tap "homebrew/core"
-tap "homebrew/services"
-# tap "homebrew/cask-fonts"
-tap "jesseduffield/lazygit"
+# CodexBar is not currently available in Homebrew core.
+tap "steipete/tap"
 
+brew "ast-grep"                             # Structural code search and rewriting
 brew "autoconf"                             # Configuration shell script maker
 brew "bash"                                 # Bourne again shell
 brew "bash-completion"                      # Autocompletions for `bash`
+brew "chezmoi"                              # Dotfile manager
 brew "colordiff"                            # Colour-highlighted diff output
 brew "direnv"                               # Directory specific env variables
+brew "ffmpeg"                               # Audio and video processing
+brew "git-lfs"                              # Git large-file support
 # brew "flake8"                               # Python style guide enforcer
 # brew "fswatch"                              # File change monitor
 # brew "geoip"                                # Geographic IP lookup
@@ -29,22 +26,24 @@ brew "direnv"                               # Directory specific env variables
 # brew "graphicsmagick"                      # GraphicsMagick image processor
 # brew "imagemagick"                         # ImageMagick image processor
 # brew "jpegoptim"                            # JPEG compressor/optimizer
+brew "kubectx"                              # Kubernetes context and namespace switching
 brew "less"                                 # Terminal pager
 brew "lesspipe"                             # Input filter for `less`
+brew "libpq"                                # PostgreSQL client libraries and tools
 # brew "micro"                                # Micro text editor
+brew "mosh"                                 # Resilient remote shell
 brew "nano"                                 # Nano text editor
 # brew "npm"                                  # Node package manager
 # brew "optipng"                             # PNG compressor/optimizer
 # brew "tidy-html5"                           # HTML corrector
 brew "neofetch"                             # System information tool
-# brew "pipenv"                               # Python packaging tool
 # brew "postgresql", restart_service: true    # PostgreSQL RDBMS
-# brew "pyenv"                                # Python version manager
-# brew "pyenv-virtualenv"                     # virtualenv and conda manager
-# brew "ruby-build"                           # Ruby version managger
-# brew "rbenv"                                # Ruby environment manager
+brew "plantuml"                             # Diagram generator
+brew "redis"                                # Redis server and CLI
+brew "render"                               # Render platform CLI
 brew "ripgrep"                              # Recursive Regex search tool
 brew "rsync"                                # File transfer and sync tool
+brew "slackdump"                            # Slack export utility
 # brew "screenfetch"                          # Screenshot information tool
 # brew "starship"                             # Starship cross-shell prompt
 # brew "telnet"                               # Virtual terminal client
@@ -64,8 +63,11 @@ brew "openssl@3"                          # Open SSL
 brew "neovim"
 brew "starship"
 brew "tailscale"                            # Mesh VPN CLI and daemon
-brew "bitwarden-cli"
+brew "watch"                                # Run commands periodically
+brew "whisper-cpp"                          # Local speech-to-text tools
+brew "yt-dlp"                               # Media downloader
 brew "fzf"
+brew "k9s"                                  # Kubernetes terminal UI
 
 # cask "android-platform-tools"               # Android SDK platform-tools
 cask "amethyst"
@@ -75,5 +77,9 @@ cask "font-hack-nerd-font"                  # Hack Mono Nerd Font
 # cask "powershell"                           # Cross-platform shell
 # cask "alacritty"                            # Terminal Emulator
 cask "ghostty"
+cask "ngrok"
+cask "orbstack"
+cask "warp"
 cask "wezterm"
 cask "karabiner-elements"
+cask "steipete/tap/codexbar"

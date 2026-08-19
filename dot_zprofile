@@ -1,0 +1,8 @@
+# ~/.zprofile
+# Homebrew owns system packages and mise itself.
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# OrbStack manages this integration file.
+[ -f "$HOME/.orbstack/shell/init.zsh" ] && source "$HOME/.orbstack/shell/init.zsh"

@@ -24,6 +24,3 @@ use_symbol_for_status = true    # Indicate error status by changing the symbol.
 
 [git_state]
 cherry_pick = "🍒 PICKING"      # The text shown when a cherry-pick is in progress.
-
-[python]
-pyenv_version_name = true       # Use pyenv to get Python version.

@@ -10,6 +10,12 @@
 # shellcheck shell=bash
 # shellcheck source=/dev/null
 
+# Homebrew owns system packages and mise itself, so initialize it before
+# ~/.bashrc activates mise.
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 # Load configuration bulk from non-login shell.
 if [ -n "$BASH_VERSION" ]; then
     if [ -f "$HOME/.bashrc" ]; then
@@ -24,9 +30,3 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
-. "$HOME/.cargo/env"
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/kaviisuri/.sdkman"
-[[ -s "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/kaviisuri/.sdkman/bin/sdkman-init.sh"
-. "/Users/kaviisuri/.deno/env"

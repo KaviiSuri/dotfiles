@@ -65,36 +65,17 @@ setup_dependencies() {
       rustup update
     fi
 
-    # Install SDKManager
-    printf -- "%sInstalling/updating SDKManager...%s\n" "$BLUE" "$RESET"
-    if ! command -v sdk > /dev/null; then
-      curl -s "https://get.sdkman.io" | bash
-    else 
-      sdk selfupdate
-    fi
 }
 
 setup_prompts() {
     printf -- "\n%sSetting up shell frameworks:%s\n\n" "$BOLD" "$RESET"
 }
 
-setup_applications() {
-    printf -- "\n%sSetting up CLI applications:%s\n\n" "$BOLD" "$RESET"
-    printf -- "\n%sInstalling Neovim:%s\n\n" "$BLUE" "$RESET"
-    if ! command -v nvim > /dev/null; then
-      curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/rolling/utils/installer/install-neovim-from-release | sudo bash /dev/stdin
-    fi
-}
-
 setup_ai_tools() {
     printf -- "\n%sSetting up AI tools:%s\n\n" "$BOLD" "$RESET"
 
-    if command_exists corepack; then
-        corepack enable
-    fi
-
-    command_exists pnpm || {
-        error "pnpm is not installed"
+    command_exists npm || {
+        error "npm is not installed"
         exit 1
     }
 
@@ -113,7 +94,6 @@ setup_ai_tools() {
         cd "$HOME/claude-code-proxy"
         npm install
         npm run build
-        npm link
     )
 }
 
@@ -183,8 +163,9 @@ setup_devtools() {
         exit 1
     }
 
-    # Tool installation is reconciled by run_onchange_after_40-mise-tools.sh
-    # during the final chezmoi apply.
+    # Reconcile mise before setup steps that depend on its tools (for example
+    # gh and npm in setup_ai_tools).
+    bash "$(chezmoi source-path)/run_onchange_after_40-mise-tools.sh"
 }
 
 finalize_dotfiles() {
@@ -205,7 +186,6 @@ main() {
     setup_dependencies
     setup_color
     setup_prompts
-    setup_applications
     setup_devtools
     setup_ai_tools
     finalize_dotfiles

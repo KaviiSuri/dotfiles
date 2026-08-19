@@ -1,5 +1,3 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/kavii-suri/.zsh/completions:"* ]]; then export FPATH="/Users/kavii-suri/.zsh/completions:$FPATH"; fi
 # -*-mode:sh-*- vim:ft=shell-script
 
 # ~/.zshrc
@@ -181,11 +179,6 @@ fi
 # Development environments
 # -----------------------------------------------------------------------------
 
-# Enable Python version management.
-if command -v pyenv > /dev/null; then
-    eval "$(pyenv init --path)"
-fi
-
 # Provide Travis CI completions.
 [ -f "$HOME"/.travis/travis.sh ] && \. "$HOME"/.travis/travis.sh
 
@@ -216,16 +209,9 @@ if [ -f "$HOME"/.bash_extras ]; then
     \. "$HOME"/.bash_extras
 fi
 
-# Rust
-# -----------------------------------------------------------------------------
-PATH=~/.cargo/bin/:$PATH
+# Rust remains managed by rustup.
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
-# pnpm
-# -----------------------------------------------------------------------------
-export PNPM_HOME="/Users/kavii-suri/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
-[ -f "/Users/kavii/.ghcup/env" ] && source "/Users/kavii/.ghcup/env" # ghcup-envexport PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 #GO
@@ -237,10 +223,6 @@ export PATH="$PATH:$GOPATH/bin"
 # -----------------------------------------------------------------------------
 alias conf-proxy="~/conf-proxy/main.sh"
 source ~/conf-proxy/proxy-conf.sh
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # gcloud
 # -----------------------------------------------------------------------------export PATH="$HOME/tools/google-cloud-sdk/bin:$PATH"
@@ -258,28 +240,13 @@ if [ -f '/Users/kavii-suri/google-cloud-sdk/completion.zsh.inc' ]; then . '/User
 export PATH="/opt/homebrew/opt/ffmpeg@6/bin:$PATH"
 
 
-# BEGIN opam configuration
-# This is useful if you're using opam as it adds:
-#   - the correct directories to the PATH
-#   - auto-completion for the opam binary
-# This section can be safely removed at any time if needed.
-[[ ! -r '/Users/kavii-suri/.opam/opam-init/init.zsh' ]] || source '/Users/kavii-suri/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
-# END opam configuration
-
 # Added by Windsurf
 export PATH="/Users/kavii-suri/.codeium/windsurf/bin:$PATH"
 
 
-# bun completions
-[ -s "/Users/kavii-suri/.bun/_bun" ] && source "/Users/kavii-suri/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
 
-# Activate mise after legacy version managers so mise owns the final tool PATH.
+# Activate mise as the final owner of development-tool PATH entries.
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate zsh)"
 fi
