@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.80.6",
+  "lastChangelogVersion": "0.84.2",
   "defaultProvider": "claude-bridge",
   "defaultModel": "claude-fable-5",
   "defaultThinkingLevel": "high",
@@ -34,7 +34,7 @@
     "git:github.com/KaviiSuri/pi-extensions",
     "npm:@narumitw/pi-goal",
     "npm:pi-commandcode-provider",
-    "npm:pi-claude-bridge"
+    "git:github.com/KaviiSuri/pi-claude-bridge"
   ],
   "terminal": {
     "showTerminalProgress": true
