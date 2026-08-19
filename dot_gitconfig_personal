@@ -1,0 +1,13 @@
+# -*-mode:gitconfig-*- vim:ft=gitconfig
+
+# ~/.gitconfig_personal
+# =============================================================================
+# Personal identity, included by ~/.gitconfig for repositories that live under a
+# personal directory. Selecting identity by path rather than by remote host is
+# what makes this work on both machines: `github.com` resolves to the work
+# account on the work machine and the personal account on the personal one, so
+# the remote URL is not a reliable signal.
+
+[user]
+    name = "KaviiSuri"
+    email = "surikavii@gmail.com"

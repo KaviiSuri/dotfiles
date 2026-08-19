@@ -25,6 +25,9 @@
     template = ~/.gitmessage.txt
 
 [core]
+    # Shared hook dispatcher. Git ignores this silently if the directory is absent.
+    hooksPath = {{ .chezmoi.homeDir }}/.githooks
+
     # Disable line endings output conversion.
     autocrlf = input
 
@@ -110,12 +113,31 @@
 [url "git@github-personal:"]
     insteadOf = https://github-personal/
 
+# Written by `gh auth setup-git`. The empty first value clears inherited helpers
+# so gh is the only one consulted. Resolved from PATH rather than an absolute
+# path so it survives a different package prefix on another machine.
+[credential "https://github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+    helper =
+    helper = !gh auth git-credential
+
 [user]
     # Specify the email address of the author/committer.
     email = "{{ .email }}"
 
     # Specify the username of the author/committer.
     name = "{{ .name }}"
+
+# Personal repositories override the identity above. Keyed on directory, not on
+# remote host, because `github.com` means a different account on each machine.
+[includeIf "gitdir:~/code/KaviiSuri/"]
+    path = .gitconfig_personal
+
+[includeIf "gitdir:~/.local/share/chezmoi/"]
+    path = .gitconfig_personal
 
 [include]
     # Include aliases.

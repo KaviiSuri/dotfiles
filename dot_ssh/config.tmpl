@@ -16,10 +16,13 @@ Host clark
       Port 22
       User kavii
 
+# Stable name for "GitHub as my personal account", independent of what plain
+# github.com resolves to on this machine. The key filename differs per machine,
+# so it comes from chezmoi data rather than being hardcoded.
 Host github-personal
       HostName github.com
       User git
-      IdentityFile ~/.ssh/id_ed25519_personal
+      IdentityFile ~/.ssh/{{ dig "personalSshKey" "id_ed25519_personal" . }}
       IdentitiesOnly yes
 
 Host vastai-kavii-direct
