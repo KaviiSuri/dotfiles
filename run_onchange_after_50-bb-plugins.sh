@@ -20,11 +20,12 @@ plugins_json=$(bb plugin list --json)
 
 ensure_plugin() {
   local id=$1 source=$2 current_source
+  shift 2
   current_source=$(jq -r --arg id "$id" '.plugins[] | select(.id == $id) | .source' <<<"$plugins_json")
 
   if [[ -z $current_source ]]; then
     echo "bb plugins: installing $id from $source"
-    bb plugin install "$source" --yes
+    bb plugin install "$source" "$@" --yes
   elif [[ $current_source != "$source" ]]; then
     echo "bb plugins: $id already uses $current_source; preserving its data and not replacing it with $source" >&2
   fi
@@ -42,10 +43,12 @@ disable_if_present() {
   fi
 }
 
-# All three are public, so plain https clones anonymously on any machine.
+# These repositories are public, so plain https clones anonymously on any machine.
 ensure_plugin notifications 'git:https://github.com/KaviiSuri/bb-plugin-notifications.git@main'
 ensure_plugin tasks-kv 'git:https://github.com/KaviiSuri/bb-plugin-tasks.git@main'
 ensure_plugin worktree-setup 'git:https://github.com/KaviiSuri/bb-plugin-worktree-setup.git@main'
+ensure_plugin plannotator 'git:https://github.com/patleeman/bb-plugins.git@main' \
+  --subdirectory packages/bb-plugin-plannotator
 
 # Community plugins, pinned to a compatible range rather than a moving branch.
 ensure_plugin attention 'npm:bb-plugin-attention@^0.1.0'
