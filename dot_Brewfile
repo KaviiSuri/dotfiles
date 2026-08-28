@@ -8,6 +8,7 @@
 
 # CodexBar is not currently available in Homebrew core.
 tap "steipete/tap"
+tap "nikitabobko/tap"
 
 brew "ast-grep"                             # Structural code search and rewriting
 brew "autoconf"                             # Configuration shell script maker
@@ -71,6 +72,7 @@ brew "k9s"                                  # Kubernetes terminal UI
 
 # cask "android-platform-tools"               # Android SDK platform-tools
 cask "amethyst"
+cask "nikitabobko/tap/aerospace"
 cask "font-dejavu-sans-mono-nerd-font"   # DejaVu Sans Mono Nerd Font
 cask "font-fira-code-nerd-font"             # Fira Code Nerd Font
 cask "font-hack-nerd-font"                  # Hack Mono Nerd Font
