@@ -11,7 +11,7 @@ agent_panel_sort = "priority"
 name = "tokyo-night"
 
 [keys]
-prefix = "ctrl+a"
+prefix = "ctrl+alt+a"
 new_tab = "prefix+c"
 split_vertical = "prefix+backslash"
 split_horizontal = "prefix+minus"
