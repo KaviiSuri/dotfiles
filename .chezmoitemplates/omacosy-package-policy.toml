@@ -1,4 +1,0 @@
-private_repository = "git@github-personal:KaviiSuri/omacosy.git"
-public_upstream = "https://github.com/paulsp94/omacosy.git"
-tested_commit = "93ac20082fa21339978550faccb03381087f3a77"
-checkout_path = "~/code/KaviiSuri/omacosy"
