@@ -15,26 +15,29 @@ import unittest
 ROOT = Path(os.environ.get("INPUT_GATE_ROOT", Path(__file__).parents[1]))
 
 
-def caps_manipulators():
+def karabiner_manipulators():
     config = json.loads(
         (ROOT / "dot_config/private_karabiner/private_karabiner.json").read_text()
     )
-    manipulators = (
+    return [
         manipulator
         for profile in config["profiles"]
         for rule in profile.get("complex_modifications", {}).get("rules", [])
         for manipulator in rule.get("manipulators", [])
-    )
+    ]
+
+
+def manipulators_for(key_code):
     return [
         manipulator
-        for manipulator in manipulators
-        if manipulator.get("from", {}).get("key_code") == "caps_lock"
+        for manipulator in karabiner_manipulators()
+        if manipulator.get("from", {}).get("key_code") == key_code
     ]
 
 
 class KarabinerInputGateTest(unittest.TestCase):
-    def test_caps_is_escape_when_tapped_and_super_for_chords(self):
-        caps = caps_manipulators()
+    def test_caps_is_escape_when_tapped_and_control_for_chords(self):
+        caps = manipulators_for("caps_lock")
         self.assertEqual(len(caps), 1, "Expected one global Caps Lock manipulator")
         manipulator = caps[0]
 
@@ -43,14 +46,11 @@ class KarabinerInputGateTest(unittest.TestCase):
             manipulator["from"].get("modifiers"), {"optional": ["any"]}
         )
 
-        self.assertEqual(len(manipulator["to"]), 1, "Expected one lazy Super event")
-        hold_event = manipulator["to"][0]
-        hold_modifiers = {hold_event["key_code"], *hold_event.get("modifiers", [])}
-        self.assertTrue(
-            {"left_control", "left_option"}.issubset(hold_modifiers),
-            f"Caps chord must emit Control+Option, got {sorted(hold_modifiers)}",
+        self.assertEqual(
+            manipulator["to"],
+            [{"key_code": "left_control", "lazy": True}],
+            "Caps chords must emit exactly Control, never Option",
         )
-        self.assertTrue(hold_event.get("lazy"), "Caps tap must not leak a modifier")
 
         self.assertNotIn(
             "to_if_held_down",
@@ -64,19 +64,35 @@ class KarabinerInputGateTest(unittest.TestCase):
             {"basic.to_if_alone_timeout_milliseconds": 1000},
         )
 
-    def test_caps_rule_has_no_application_condition(self):
-        application_condition_types = {
-            "frontmost_application_if",
-            "frontmost_application_unless",
-        }
-        condition_types = set()
-        for manipulator in caps_manipulators():
-            condition_types.update(
-                condition.get("type")
-                for condition in manipulator.get("conditions", [])
-            )
+    def test_left_option_is_global_super_and_preserves_incoming_modifiers(self):
+        left_option = manipulators_for("left_option")
+        self.assertEqual(
+            len(left_option), 1, "Expected one global Left Option manipulator"
+        )
+        manipulator = left_option[0]
 
-        self.assertTrue(application_condition_types.isdisjoint(condition_types))
+        self.assertEqual(
+            manipulator["from"],
+            {
+                "key_code": "left_option",
+                "modifiers": {"optional": ["any"]},
+            },
+            "Optional modifiers must remain available to the output, including Shift",
+        )
+        self.assertEqual(
+            manipulator["to"],
+            [{"key_code": "left_control", "modifiers": ["left_option"]}],
+        )
+
+    def test_right_option_is_not_remapped(self):
+        self.assertEqual(manipulators_for("right_option"), [])
+
+    def test_input_gate_is_global(self):
+        for manipulator in (
+            *manipulators_for("caps_lock"),
+            *manipulators_for("left_option"),
+        ):
+            self.assertNotIn("conditions", manipulator)
 
 
 class TmuxInputGateTest(unittest.TestCase):
