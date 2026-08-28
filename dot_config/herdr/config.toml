@@ -5,8 +5,8 @@ delivery = "herdr"
 
 [ui]
 show_agent_labels_on_pane_borders = false
-agent_panel_scope = "all"
 
+agent_panel_sort = "priority"
 [theme]
 name = "tokyo-night"
 
@@ -24,6 +24,11 @@ previous_tab = "prefix+comma"
 next_tab = "prefix+."
 previous_agent = "prefix+["
 next_agent = "prefix+]"
+
+[[keys.command]]
+key = "prefix+;"
+type = "shell"
+command = "/Users/kavii-suri/.config/herdr/layout-left-big-right-stacked.sh"
 
 [keys.indexed]
 tabs = "ctrl"
