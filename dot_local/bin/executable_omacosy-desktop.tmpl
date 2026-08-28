@@ -49,6 +49,14 @@ case "$origin_urls" in
     ;;
 esac
 
+dirty_state=$(
+  GIT_OPTIONAL_LOCKS=0 git -C "$checkout" status \
+    --porcelain=v1 --untracked-files=all --ignored=matching 2>/dev/null
+) ||
+  fail "cannot inspect checkout cleanliness at $checkout"
+[ -z "$dirty_state" ] ||
+  fail "checkout is not clean at $checkout; commit or remove these entries:\n$dirty_state"
+
 [ -x "$omacosy" ] || fail "expected executable is missing or not executable: $omacosy"
 
 exec "$omacosy" "$@"
