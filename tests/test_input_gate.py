@@ -33,7 +33,7 @@ def caps_manipulators():
 
 
 class KarabinerInputGateTest(unittest.TestCase):
-    def test_caps_is_escape_when_tapped_and_super_when_held(self):
+    def test_caps_is_escape_when_tapped_and_super_for_chords(self):
         caps = caps_manipulators()
         self.assertEqual(len(caps), 1, "Expected one global Caps Lock manipulator")
         manipulator = caps[0]
@@ -43,19 +43,25 @@ class KarabinerInputGateTest(unittest.TestCase):
             manipulator["from"].get("modifiers"), {"optional": ["any"]}
         )
 
+        self.assertEqual(len(manipulator["to"]), 1, "Expected one lazy Super event")
         hold_event = manipulator["to"][0]
         hold_modifiers = {hold_event["key_code"], *hold_event.get("modifiers", [])}
         self.assertTrue(
             {"left_control", "left_option"}.issubset(hold_modifiers),
-            f"Caps hold must emit Control+Option, got {sorted(hold_modifiers)}",
+            f"Caps chord must emit Control+Option, got {sorted(hold_modifiers)}",
         )
         self.assertTrue(hold_event.get("lazy"), "Caps tap must not leak a modifier")
 
-        held_event = manipulator["to_if_held_down"][0]
-        held_modifiers = {held_event["key_code"], *held_event.get("modifiers", [])}
-        self.assertTrue(
-            {"left_control", "left_option"}.issubset(held_modifiers),
-            f"Held Caps must emit Control+Option, got {sorted(held_modifiers)}",
+        self.assertNotIn(
+            "to_if_held_down",
+            manipulator,
+            "A held threshold must not suppress Escape for slower Caps taps",
+        )
+        # Karabiner's documented default is 1000 ms. Keeping it explicit accepts
+        # deliberate Caps taps; another key still cancels the tap immediately.
+        self.assertEqual(
+            manipulator.get("parameters"),
+            {"basic.to_if_alone_timeout_milliseconds": 1000},
         )
 
     def test_caps_rule_has_no_application_condition(self):
