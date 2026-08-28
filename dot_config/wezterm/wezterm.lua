@@ -37,8 +37,13 @@ config.ssh_domains = {
 }
 
 -- tmux
-config.leader = { key = "a", mods = "CTRL|ALT", timeout_milliseconds = 2000 }
+config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 2000 }
 config.keys = {
+	{
+		key = "a",
+		mods = "LEADER|CTRL",
+		action = wezterm.action.SendKey({ key = "a", mods = "CTRL" }),
+	},
 	{
 		mods = "LEADER",
 		key = "g",

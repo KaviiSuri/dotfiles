@@ -96,16 +96,15 @@ class KarabinerInputGateTest(unittest.TestCase):
 
 
 class TmuxInputGateTest(unittest.TestCase):
-    def test_source_replaces_old_prefixes_and_preserves_send_prefix(self):
+    def test_ctrl_a_is_the_prefix_and_double_prefix_forwards_ctrl_a(self):
         source = (ROOT / "dot_config/tmux/options.conf").read_text()
 
-        self.assertRegex(source, r"(?m)^set\s+-g\s+prefix\s+C-M-a$")
-        self.assertRegex(source, r"(?m)^unbind-key\s+C-a$")
+        self.assertRegex(source, r"(?m)^set\s+-g\s+prefix\s+C-a$")
         self.assertRegex(source, r"(?m)^unbind-key\s+C-b$")
-        self.assertRegex(source, r"(?m)^bind-key\s+C-M-a\s+send-prefix$")
-        self.assertIsNone(re.search(r"(?m)^bind-key\s+C-[ab]\s+send-prefix$", source))
+        self.assertRegex(source, r"(?m)^bind-key\s+C-a\s+send-prefix$")
+        self.assertNotRegex(source, r"(?m)^set\s+-g\s+prefix\s+C-M-a$")
 
-    def test_disposable_server_has_only_the_super_send_prefix_binding(self):
+    def test_disposable_server_has_ctrl_a_prefix_and_send_prefix_binding(self):
         tmux = shutil.which("tmux")
         if tmux is None:
             self.skipTest("tmux is unavailable")
@@ -146,22 +145,21 @@ class TmuxInputGateTest(unittest.TestCase):
                     capture_output=True,
                 )
 
-        self.assertEqual(prefix, "C-M-a")
+        self.assertEqual(prefix, "C-a")
         send_prefix_keys = re.findall(
             r"(?m)^bind-key\s+-T\s+prefix\s+(\S+)\s+send-prefix$", prefix_keys
         )
-        self.assertEqual(send_prefix_keys, ["C-M-a"])
-        self.assertNotRegex(prefix_keys, r"(?m)^bind-key\s+-T\s+prefix\s+C-[ab]\s")
+        self.assertEqual(send_prefix_keys, ["C-a"])
 
 
 class ApplicationPrefixTest(unittest.TestCase):
-    def test_herdr_uses_super_prefix(self):
+    def test_herdr_uses_ctrl_a_prefix_for_double_prefix_forwarding(self):
         with (ROOT / "dot_config/herdr/config.toml").open("rb") as config_file:
             config = tomllib.load(config_file)
 
-        self.assertEqual(config["keys"]["prefix"], "ctrl+alt+a")
+        self.assertEqual(config["keys"]["prefix"], "ctrl+a")
 
-    def test_wezterm_uses_super_leader(self):
+    def test_wezterm_uses_ctrl_a_leader_without_changing_timeout(self):
         source = (ROOT / "dot_config/wezterm/wezterm.lua").read_text()
         leader = re.search(
             r'config\.leader\s*=\s*\{\s*key\s*=\s*"a"\s*,\s*'
@@ -170,8 +168,29 @@ class ApplicationPrefixTest(unittest.TestCase):
         )
 
         self.assertIsNotNone(leader, "WezTerm leader declaration is missing")
-        self.assertEqual(leader.group(1), "CTRL|ALT")
+        self.assertEqual(leader.group(1), "CTRL")
         self.assertEqual(leader.group(2), "2000")
+
+    def test_wezterm_double_ctrl_a_forwards_ctrl_a_only_while_leader_is_active(self):
+        source = (ROOT / "dot_config/wezterm/wezterm.lua").read_text()
+        forwarding_binding = re.search(
+            r'\{\s*key\s*=\s*"a"\s*,\s*mods\s*=\s*"([^"]+)"\s*,\s*'
+            r'action\s*=\s*wezterm\.action\.SendKey\(\{\s*'
+            r'key\s*=\s*"a"\s*,\s*mods\s*=\s*"([^"]+)"\s*,?\s*\}\)\s*,?\s*\}',
+            source,
+        )
+
+        self.assertIsNotNone(
+            forwarding_binding,
+            "WezTerm must explicitly forward the second Ctrl+A after its leader",
+        )
+        self.assertEqual(forwarding_binding.group(1), "LEADER|CTRL")
+        self.assertEqual(forwarding_binding.group(2), "CTRL")
+        self.assertNotRegex(
+            source,
+            r'\{\s*key\s*=\s*"a"\s*,\s*mods\s*=\s*"CTRL"\s*,\s*action\s*=',
+            "Plain Ctrl+A must remain available to the pane outside leader mode",
+        )
 
 
 if __name__ == "__main__":
