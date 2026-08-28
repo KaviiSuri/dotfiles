@@ -1,0 +1,25 @@
+[tools]
+bun = "latest"
+claude = "latest"
+codex = "latest"
+deno = "latest"
+gcloud = "latest"
+gh = "latest"
+"github:herdrdev/herdr" = "latest"
+kubecolor = "latest"
+node = "24"
+"npm:@bitwarden/cli" = "latest"
+"npm:@earendil-works/pi-coding-agent" = { version = "latest", npm_args = "--ignore-scripts=false" }
+"npm:agent-browser" = { version = "0.26.0", npm_args = "--ignore-scripts=false" }
+"npm:bb-app" = { version = "latest", npm_args = "--ignore-scripts=false" }
+opencode = "latest"
+"pipx:tmuxp" = "latest"
+pnpm = "10"
+railway = "latest"
+terraform = "1.13"
+uv = "latest"
+vercel = { version = "latest", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
+worktrunk = "latest"
+
+[settings.npm]
+shell_out = true
